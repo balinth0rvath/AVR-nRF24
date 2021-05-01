@@ -11,6 +11,7 @@
 #include <avr/io.h>
 
 // nRF24 Port
+#define NRF24_DDR								DDRC
 #define NRF24_PORT								PORTC
 #define NRF24_PIN								PINC
 

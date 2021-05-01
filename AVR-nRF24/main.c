@@ -13,21 +13,12 @@
 
 int main(void)
 {
-    //DDRD &= ~(1 << PD2);
-    //PORTD |= (1 << PD2);
-    DDRC |= (1 << PC1);			// set Port C pin PC1 for output
-    DDRC |= (1 << PC2);			// set Port C pin PC2 for output
-    DDRC |= (1 << PC3);			// set Port C pin PC3 for output
-    DDRC |= (1 << PC4);			// set Port C pin PC4 for output
-    DDRC |= (1 << PC5);			// set Port C pin PC5 for output
+	
+    nrf24_init();
     
     while (1) {					// begin infinite loop
-	    //if (!(PIND & (1 << PD2)))
-	    PORTC ^= (1 << PC1);	// flip state of LED on PC1
-	    PORTC ^= (1 << PC2);	// flip state of LED on PC2
-	    PORTC ^= (1 << PC3);	// flip state of LED on PC3
-	    PORTC ^= (1 << PC4);	// flip state of LED on PC4
-	    PORTC ^= (1 << PC5);	// flip state of LED on PC5
+	    
+	    NRF24_PORT ^= (1 << NRF24_GPIO_SCLK);	
 
 	    _delay_ms(530);			// delay 1/2 second
     }
