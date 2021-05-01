@@ -24,12 +24,13 @@
 	NRF24_DDR |= (1 << NRF24_GPIO_CE);
 	NRF24_DDR |= (1 << NRF24_GPIO_SCLK);
 	NRF24_DDR |= (1 << NRF24_GPIO_MOSI);
+	NRF24_DDR &= ~(1 << NRF24_GPIO_MISO); // input
 	NRF24_DDR |= (1 << NRF24_GPIO_CSN);		
 		
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);	 
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
-	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);
-	NRF24_PORT |= (1 << NRF24_GPIO_SCLK);
+	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);	
+	NRF24_PORT &= ~(1 << NRF24_GPIO_MISO);	// float
 
 	if (nrf24_check_device())
 	{
@@ -160,8 +161,10 @@
 
 		 NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);
 		 _delay_ms(NRF24_SPI_HALF_CLK);
-		 ret = ret | (~( NRF24_PIN & (1 << NRF24_GPIO_MISO) << i ));
-		 
+		 if (NRF24_PIN & (1 << NRF24_GPIO_MISO))
+		 {
+			ret = ret | (1 << i );
+		 }		 		 
 		 NRF24_PORT |= (1 << NRF24_GPIO_SCLK);	
 		 _delay_ms(NRF24_SPI_HALF_CLK);
 	 }
