@@ -22,7 +22,7 @@
 #define NRF24_GPIO_CSN							PC1								
 #define NRF24_GPIO_IRQ	 						PC0								
 #define NRF24_GPIO_MISO							PC3							
-#define NRF24_SPI_HALF_CLK						500								
+#define NRF24_SPI_HALF_CLK						5								
 
 // nRF24 commands
 #define NRF24_CMD_R_REGISTER 					0x00
@@ -69,13 +69,16 @@
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
 void nrf24_init();
+void nrf24_receive_poll();
 static void nrf24_init_device(void);
 static int 	nrf24_check_device(void);
 static int nrf24_get_register(int reg);
 static void nrf24_get_address_register(int reg, int* result);
+static void nrf24_read_payload();
 static void nrf24_write_register(int register, int value, int mask);
 static void nrf24_write_payload(char* payload);
 static void nrf24_flush_tx(void);
+static void nrf24_flush_rx(void);
 static int 	nrf24_send_byte(int value);
 static void nrf24_transmit_packet(char* payload, int* status, int* wait);
 

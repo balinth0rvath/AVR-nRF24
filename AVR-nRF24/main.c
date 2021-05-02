@@ -12,16 +12,11 @@
 #include "nrf24.h"
 
 int main(void)
-{
-	
-    nrf24_init();
-    
-    while (1) {					// begin infinite loop
-	    
-	    NRF24_PORT ^= (1 << NRF24_GPIO_SCLK);	
-
+{	
+    nrf24_init();    
+    while (1) {					// begin infinite loop	    
+	    nrf24_receive_poll();	
 	    _delay_ms(530);			// delay 1/2 second
     }
-
 }
 
