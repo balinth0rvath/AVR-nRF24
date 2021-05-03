@@ -15,34 +15,50 @@ struct nrf24_dev_t {
 void nrf24_init()
 {
 		
-struct nrf24_dev_t* nrf24_devp = &nrf24_dev;
+	struct nrf24_dev_t* nrf24_devp = &nrf24_dev;
 	 
-int i;
-for(i=0;i<32;i++)
-	nrf24_devp->payload_buffer[i]=i;
+	int i;
+	for(i=0;i<32;i++)
+		nrf24_devp->payload_buffer[i]=i;
 
-NRF24_DDR |= (1 << NRF24_GPIO_CE);
-NRF24_DDR |= (1 << NRF24_GPIO_SCLK);
-NRF24_DDR |= (1 << NRF24_GPIO_MOSI);
-NRF24_DDR &= ~(1 << NRF24_GPIO_MISO); // input
-NRF24_DDR |= (1 << NRF24_GPIO_CSN);		
+	NRF24_DDR |= (1 << NRF24_GPIO_CE);
+	NRF24_DDR |= (1 << NRF24_GPIO_SCLK);
+	NRF24_DDR |= (1 << NRF24_GPIO_MOSI);
+	NRF24_DDR &= ~(1 << NRF24_GPIO_MISO); // input
+	NRF24_DDR |= (1 << NRF24_GPIO_CSN);		
 		
-NRF24_PORT &= ~(1 << NRF24_GPIO_CE);	 
-NRF24_PORT |= (1 << NRF24_GPIO_CSN);
-NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);	
-NRF24_PORT &= ~(1 << NRF24_GPIO_MISO);	// float
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);	 
+	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
+	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);	
+	NRF24_PORT &= ~(1 << NRF24_GPIO_MISO);	// float
 
-if (nrf24_check_device())
-{
-	while(1)
+	if (nrf24_check_device())
 	{
-		NRF24_PORT ^= (1 << NRF24_GPIO_CSN);
-		_delay_ms(50);
-	}		
+		while(1)
+		{
+			NRF24_PORT ^= (1 << NRF24_GPIO_CSN);
+			_delay_ms(50);
+		}		
+	}
+	nrf24_flush_tx();
+	nrf24_flush_rx();
+	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
+	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel
+	nrf24_write_register(NRF24_REG_SETUP_RETR, 0xff, 0xff);	// delay and retry
+	nrf24_write_register(NRF24_REG_CONFIG,0x1,0x1);			// RX
+	nrf24_write_register(NRF24_REG_CONFIG,0x2,0x2);			// Power up
+	nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
+	nrf24_write_register(NRF24_REG_RX_PW_P0,4,0x3f);			// set payload length of 4 for pipe0
+	NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
+	_delay_ms(2);
+
 }
 
-nrf24_init_device();
-
+static int nrf24_check_device()
+{
+	int ret = 0;
+	ret = nrf24_get_register(NRF24_REG_STATUS);
+	return (ret != NRF24_REG_STATUS_DEFAULT);
 }
 
 void nrf24_receive_poll()
@@ -69,7 +85,7 @@ static void nrf24_read_payload()
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
 
-static void nrf24_transmit_packet(char* payload, int* status, int* wait)
+static void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait)
 {
 	 
 	*status = nrf24_get_register(NRF24_REG_STATUS);	 
@@ -90,29 +106,6 @@ static void nrf24_transmit_packet(char* payload, int* status, int* wait)
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);
 }
 
-static void nrf24_init_device()
-{
-	 
-	nrf24_flush_tx();	 
-	nrf24_flush_rx();	 
-	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
-	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel
-	nrf24_write_register(NRF24_REG_SETUP_RETR, 0xff, 0xff);	// delay and retry 
-	nrf24_write_register(NRF24_REG_CONFIG,0x1,0x1);			// RX
-	nrf24_write_register(NRF24_REG_CONFIG,0x2,0x2);			// Power up
-	nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
-	nrf24_write_register(NRF24_REG_RX_PW_P0,4,0x3f);			// set payload length of 4 for pipe0
-	NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
-	_delay_ms(2);
-}
-
-static int nrf24_check_device()
-{
-	int ret = 0;
-	ret = nrf24_get_register(NRF24_REG_STATUS);
-	return (ret != NRF24_REG_STATUS_DEFAULT);
-}
-
 static void nrf24_flush_tx(void)
 {
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
@@ -129,7 +122,7 @@ static void nrf24_flush_rx(void)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
  
-static int nrf24_get_register(int reg)
+static int nrf24_get_register(uint8_t reg)
 {
 	int ret = 0;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
@@ -141,7 +134,7 @@ static int nrf24_get_register(int reg)
 
 }
 
-static void nrf24_get_address_register(int reg, int* result)
+static void nrf24_get_address_register(uint8_t reg, uint8_t* result)
 {
 	int i;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
@@ -154,7 +147,7 @@ static void nrf24_get_address_register(int reg, int* result)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
 
-static void nrf24_write_register(int reg, int value, int mask)
+static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask)
 {
 	int ret;	 
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
@@ -183,7 +176,7 @@ static void nrf24_write_payload(char* payload)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	
 }
 
-static int nrf24_send_byte(int value)
+static int nrf24_send_byte(uint8_t value)
 {
 	int i=0;
 	int ret=0;
