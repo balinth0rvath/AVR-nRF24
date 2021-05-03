@@ -10,6 +10,10 @@
 
 #include <avr/io.h>
 
+// Settings
+#define NRF24_SET_RECEIVER						0x0
+#define NRF24_SET_TRANSMITTER					0x1
+
 // nRF24 Port
 #define NRF24_DDR								DDRC
 #define NRF24_PORT								PORTC
@@ -68,7 +72,7 @@
 
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
-void nrf24_init();
+void nrf24_init(uint8_t direction);
 void nrf24_receive_poll(void);
 static int 	nrf24_check_device(void);
 static int nrf24_get_register(uint8_t reg);

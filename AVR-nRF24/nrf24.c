@@ -12,7 +12,7 @@ struct nrf24_dev_t {
 	char payload_buffer[32];
 } nrf24_dev;
 
-void nrf24_init()
+void nrf24_init(uint8_t direction)
 {
 		
 	struct nrf24_dev_t* nrf24_devp = &nrf24_dev;
@@ -42,13 +42,21 @@ void nrf24_init()
 	}
 	nrf24_flush_tx();
 	nrf24_flush_rx();
+
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
 	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel
 	nrf24_write_register(NRF24_REG_SETUP_RETR, 0xff, 0xff);	// delay and retry
-	nrf24_write_register(NRF24_REG_CONFIG,0x1,0x1);			// RX
 	nrf24_write_register(NRF24_REG_CONFIG,0x2,0x2);			// Power up
-	nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
-	nrf24_write_register(NRF24_REG_RX_PW_P0,4,0x3f);			// set payload length of 4 for pipe0
+	if (direction == NRF24_SET_RECEIVER)
+	{
+		nrf24_write_register(NRF24_REG_CONFIG,0x1,0x1);			// RX
+		nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
+		nrf24_write_register(NRF24_REG_RX_PW_P0,4,0x3f);			// set payload length of 4 for pipe0
+	} else
+	{
+		nrf24_write_register(NRF24_REG_CONFIG,0x1,0x1);			// RX
+	}
+	
 	NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
 	_delay_ms(2);
 
@@ -95,7 +103,7 @@ static void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait)
 	do {
 		*status = nrf24_get_register(NRF24_REG_STATUS);		 
 		if (*status & 0x30)
-		break;
+			break;
 	} while ((*wait)--);
 
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
