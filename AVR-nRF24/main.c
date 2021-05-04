@@ -26,7 +26,7 @@ void transmitter(void)
 	char payload[4] = {53,54,55,56};
 
 	uint8_t status;
-	int wait = 4000;
+	int wait = 40;
 	nrf24_init(NRF24_SET_TRANSMITTER);
 	nrf24_transmit_packet(payload, &status, &wait);
 
@@ -48,7 +48,7 @@ void transmitter(void)
 
 int main(void)
 {	
-	receiver();
+	//receiver();
 	transmitter();
 }
 

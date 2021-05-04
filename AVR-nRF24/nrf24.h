@@ -74,6 +74,7 @@
 
 void nrf24_init(uint8_t direction);
 void nrf24_receive_poll(void);
+void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait);
 static int 	nrf24_check_device(void);
 static int nrf24_get_register(uint8_t reg);
 static void nrf24_get_address_register(uint8_t reg, uint8_t* result);
@@ -83,6 +84,6 @@ static void nrf24_write_payload(char* payload);
 static void nrf24_flush_tx(void);
 static void nrf24_flush_rx(void);
 static int 	nrf24_send_byte(uint8_t value);
-static void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait);
+
 
 #endif /* NRF24_H_ */
