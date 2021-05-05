@@ -12,6 +12,16 @@ struct nrf24_dev_t {
 	char payload_buffer[32];
 } nrf24_dev;
 
+//TODO
+static void error()
+{
+	while(1) 
+	{
+		PORTD ^= (1 << PD1);
+		_delay_ms(40);
+	}
+}
+
 void nrf24_init(uint8_t direction)
 {
 		
@@ -37,9 +47,9 @@ void nrf24_init(uint8_t direction)
 	{
 		while(1)
 		{
-			NRF24_PORT ^= (1 << NRF24_GPIO_CSN);
-			_delay_ms(50);
-		}		
+			PORTD ^= (1 << PD1);
+			_delay_ms(100);
+		}	
 	}
 	
 
@@ -70,7 +80,8 @@ static int nrf24_check_device()
 {
 	int ret = 0;
 	ret = nrf24_get_register(NRF24_REG_STATUS);
-	return (ret != NRF24_REG_STATUS_DEFAULT);
+	//return (ret != NRF24_REG_STATUS_DEFAULT);
+	return (0);
 }
 
 void nrf24_receive_poll()
@@ -101,13 +112,23 @@ void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait)
 {
 	 
 	*status = nrf24_get_register(NRF24_REG_STATUS);	 
+	if (*status != 14)
+		error();
+
+
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
 	nrf24_write_payload(payload);	 
 	NRF24_PORT |= (1 << NRF24_GPIO_CE);
 	do {
 		*status = nrf24_get_register(NRF24_REG_STATUS);		 
+
 		if (*status & 0x30)
+		{
 			break;
+		} else
+		{
+			error();
+		}
 	} while ((*wait)--);
 
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
@@ -178,12 +199,13 @@ static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask)
 static void nrf24_write_payload(char* payload)
 {
 	int i;	 
+	int ret;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
 	_delay_ms(NRF24_SPI_HALF_CLK);
-	nrf24_send_byte(NRF24_CMD_W_TX_PAYLOAD);
+	nrf24_send_byte(NRF24_CMD_W_TX_PAYLOAD);	
 	for(i=0; i<4; i++)
 	{
-		nrf24_send_byte(*(payload+i));		 
+		nrf24_send_byte(*(payload+i));				 
 	}
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	
 }
