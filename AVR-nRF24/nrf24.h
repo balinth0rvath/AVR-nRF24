@@ -12,11 +12,12 @@
 
 // Settings
 #define NRF24_SET_RECEIVER						0x0
-#define NRF24_SET_TRANSMITTER					0x1
 
 // nRF24 Port
 #define NRF24_DDR								DDRC
+#define NRF24_DDR_IRQ							DDRD
 #define NRF24_PORT								PORTC
+#define NRF24_PORT_IRQ							PORTD
 #define NRF24_PIN								PINC
 
 // GPIO pin settings
@@ -24,9 +25,9 @@
 #define NRF24_GPIO_SCLK							PC4								
 #define NRF24_GPIO_MOSI							PC5								
 #define NRF24_GPIO_CSN							PC1								
-#define NRF24_GPIO_IRQ	 						PC0								
+#define NRF24_GPIO_IRQ	 						PD2								
 #define NRF24_GPIO_MISO							PC3							
-#define NRF24_SPI_HALF_CLK						5								
+#define NRF24_SPI_HALF_CLK						1							
 
 // nRF24 commands
 #define NRF24_CMD_R_REGISTER 					0x00
@@ -72,18 +73,9 @@
 
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
-void nrf24_init(uint8_t direction);
+void nrf24_init(uint8_t set_receiver);
+void nrf24_receive(void);
 void nrf24_receive_poll(void);
 void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait);
-static int 	nrf24_check_device(void);
-static int nrf24_get_register(uint8_t reg);
-static void nrf24_get_address_register(uint8_t reg, uint8_t* result);
-static void nrf24_read_payload(void);
-static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask);
-static void nrf24_write_payload(char* payload);
-static void nrf24_flush_tx(void);
-static void nrf24_flush_rx(void);
-static int 	nrf24_send_byte(uint8_t value);
-
 
 #endif /* NRF24_H_ */
