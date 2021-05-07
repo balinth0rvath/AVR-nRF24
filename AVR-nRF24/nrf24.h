@@ -13,21 +13,25 @@
 // Settings
 #define NRF24_SET_RECEIVER						0x0
 
-// nRF24 Port
+// SPI Port
 #define NRF24_DDR								DDRC
-#define NRF24_DDR_IRQ							DDRD
 #define NRF24_PORT								PORTC
-#define NRF24_PORT_IRQ							PORTD
 #define NRF24_PIN								PINC
 
-// GPIO pin settings
+// IRQ Port
+#define NRF24_DDR_IRQ							DDRD
+#define NRF24_PORT_IRQ							PORTD
+
+// SPI&CE pin settings
 #define NRF24_GPIO_CE 							PC2							
 #define NRF24_GPIO_SCLK							PC4								
 #define NRF24_GPIO_MOSI							PC5								
 #define NRF24_GPIO_CSN							PC1								
-#define NRF24_GPIO_IRQ	 						PD2								
 #define NRF24_GPIO_MISO							PC3							
 #define NRF24_SPI_HALF_CLK						1							
+
+// IRQ pin settings
+#define NRF24_GPIO_IRQ	 						PD2								
 
 // nRF24 commands
 #define NRF24_CMD_R_REGISTER 					0x00
@@ -73,7 +77,7 @@
 
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
-void nrf24_init(uint8_t set_receiver);
+void nrf24_init(uint8_t set_receiver, uint8_t use_spi);
 void nrf24_receive_irq(void);
 void nrf24_transmit_irq(void);
 void nrf24_receive_poll(void);

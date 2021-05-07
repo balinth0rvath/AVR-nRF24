@@ -16,25 +16,41 @@ static void nrf24_read_payload(void);
 static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask);
 static void nrf24_write_payload(char* payload);
 static int 	nrf24_send_byte(uint8_t value);
+static int nrf24_bitbang(uint8_t value);
 
 struct nrf24_dev_t {
 	char payload_buffer[32];
 } nrf24_dev;
 
-void nrf24_init(uint8_t set_receiver)
-{		
-	NRF24_DDR |= (1 << NRF24_GPIO_CE);
-	NRF24_DDR |= (1 << NRF24_GPIO_SCLK);
-	NRF24_DDR |= (1 << NRF24_GPIO_MOSI);
-	NRF24_DDR &= ~(1 << NRF24_GPIO_MISO);						// MISO 
-	NRF24_DDR |= (1 << NRF24_GPIO_CSN);		
-	NRF24_DDR_IRQ &= ~(1 << NRF24_GPIO_IRQ);					// IRQ
+static int g_use_spi = 0;
 
-	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);	 
-	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
-	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);	
-	NRF24_PORT &= ~(1 << NRF24_GPIO_MISO);						// float MISO			
-	NRF24_PORT_IRQ |= (1 << NRF24_GPIO_IRQ);					// pull up IRQ
+void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
+{	
+	g_use_spi = use_spi;	
+	NRF24_DDR |= (1 << NRF24_GPIO_CE);							// CE output	
+	NRF24_DDR |= (1 << NRF24_GPIO_CSN);							// CSN output
+	NRF24_DDR_IRQ &= ~(1 << NRF24_GPIO_IRQ);					// IRQ input
+
+	if (g_use_spi)
+	{
+
+	} else
+	{
+		NRF24_DDR |= (1 << NRF24_GPIO_SCLK);						// SCLK output
+		NRF24_DDR |= (1 << NRF24_GPIO_MOSI);						// MISO output
+		NRF24_DDR &= ~(1 << NRF24_GPIO_MISO);						// MISO input
+	}
+
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);						// CE 0 
+	NRF24_PORT |= (1 << NRF24_GPIO_CSN);						// CSN 1
+
+	if (!g_use_spi)
+	{
+		NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);						// SCLK 0	
+	}	
+
+	NRF24_PORT != (1 << NRF24_GPIO_MISO);						// MISO pull up			
+	NRF24_PORT_IRQ |= (1 << NRF24_GPIO_IRQ);					// IRQ pull up
 
 	MCUCR &= ~(1 << ISC00 | 1 << ISC01);						// active low IRQ	
 
@@ -194,14 +210,25 @@ static void nrf24_write_payload(char* payload)
 }
 
 static int nrf24_send_byte(uint8_t value)
+{	
+	if (g_use_spi)
+	{
+
+	} else
+	{
+		return nrf24_bitbang(value);
+	}
+}
+
+static int nrf24_bitbang(uint8_t value)
 {
 	int i=0;
 	int ret=0;
 	for(i=7;i>=0;i--)
 	{
 		if (value & (1 << i))
-		{			 
-			NRF24_PORT |= (1 << NRF24_GPIO_MOSI);	
+		{
+			NRF24_PORT |= (1 << NRF24_GPIO_MOSI);
 
 		} else
 		{
@@ -212,11 +239,12 @@ static int nrf24_send_byte(uint8_t value)
 		_delay_ms(NRF24_SPI_HALF_CLK);
 		if (NRF24_PIN & (1 << NRF24_GPIO_MISO))
 		{
-		ret = ret | (1 << i );
-		}		 		 
-		NRF24_PORT |= (1 << NRF24_GPIO_SCLK);	
+			ret = ret | (1 << i );
+		}
+		NRF24_PORT |= (1 << NRF24_GPIO_SCLK);
 		_delay_ms(NRF24_SPI_HALF_CLK);
 	}
 	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);
 	return ret;
+
 }
