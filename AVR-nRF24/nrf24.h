@@ -74,8 +74,11 @@
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
 void nrf24_init(uint8_t set_receiver);
-void nrf24_receive(void);
+void nrf24_receive_irq(void);
+void nrf24_transmit_irq(void);
 void nrf24_receive_poll(void);
-void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait);
+void nrf24_transmit_packet(char* payload, uint8_t* status);
+void nrf24_flush_tx(void);
+void nrf24_flush_rx(void);
 
 #endif /* NRF24_H_ */

@@ -15,8 +15,6 @@ static void nrf24_get_address_register(uint8_t reg, uint8_t* result);
 static void nrf24_read_payload(void);
 static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask);
 static void nrf24_write_payload(char* payload);
-static void nrf24_flush_tx(void);
-static void nrf24_flush_rx(void);
 static int 	nrf24_send_byte(uint8_t value);
 
 struct nrf24_dev_t {
@@ -82,15 +80,25 @@ void nrf24_receive_poll(void)
 {	
 	if (!(nrf24_get_register(NRF24_REG_FIFO_STATUS) & 1)) // RX FIFO not empty
 	{
-		nrf24_receive();
+		nrf24_receive_irq();
 	}
 }
 
-void nrf24_receive(void)
+void nrf24_receive_irq(void)
 {	
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
 	nrf24_read_payload();	
 }
+
+void nrf24_transmit_irq(void)
+{
+	int status = 0;
+	status = nrf24_get_register(NRF24_REG_STATUS);
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
+	
+	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);
+}
+
 
 static void nrf24_read_payload(void)
 {
@@ -107,25 +115,12 @@ static void nrf24_read_payload(void)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
 
-void nrf24_transmit_packet(char* payload, uint8_t* status, int* wait)
+void nrf24_transmit_packet(char* payload, uint8_t* status)
 { 
 	*status = nrf24_get_register(NRF24_REG_STATUS);	 
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
 	nrf24_write_payload(payload);	 
-	NRF24_PORT |= (1 << NRF24_GPIO_CE);
-	
-	do {
-		*status = nrf24_get_register(NRF24_REG_STATUS);		
-		if (*status & 0x20)
-		{
-			break;
-		} 
-	} while ((*wait)--);
-	_delay_ms(100);
-	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
-	 
-	nrf24_flush_tx();	
-	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);
+	NRF24_PORT |= (1 << NRF24_GPIO_CE);		
 }
 
 void nrf24_flush_tx(void)
@@ -136,7 +131,7 @@ void nrf24_flush_tx(void)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	 
 }
 
-static void nrf24_flush_rx(void)
+void nrf24_flush_rx(void)
 {
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
 	_delay_ms(NRF24_SPI_HALF_CLK);
