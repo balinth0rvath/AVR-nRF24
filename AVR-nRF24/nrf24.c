@@ -39,7 +39,7 @@ void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 		SPCR |= (1 << MSTR);
 		SPCR &= ~(1 << CPOL);
 		SPCR &= ~(1 << CPHA);
-		SPSR |= ~(1 << SPR1);
+		//SPSR |= ~(1 << SPR1);									// SPI2X SPR1 SPR0 000 20MHz/4 = 5MHz
 
 		DDRB |= (1 << PB2);										// SS output
 		DDRB |= (1 << PB3);										// MOSI PB3 output
@@ -122,7 +122,6 @@ void nrf24_transmit_irq(void)
 	int status = 0;
 	status = nrf24_get_register(NRF24_REG_STATUS);
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
-	
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);
 }
 
@@ -132,7 +131,6 @@ static void nrf24_read_payload(void)
 	int i;
 	int ret;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_R_RX_PAYLOAD);
 	for(i=0; i<4; i++)
 	{
@@ -140,6 +138,7 @@ static void nrf24_read_payload(void)
 		nrf24_dev.payload_buffer[i] = ret;
 	}
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
+	PORTD |= (1 << PD0);
 }
 
 void nrf24_transmit_packet(char* payload, uint8_t* status)
@@ -152,8 +151,7 @@ void nrf24_transmit_packet(char* payload, uint8_t* status)
 
 void nrf24_flush_tx(void)
 {
-	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);	 
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);	 
 	nrf24_send_byte(NRF24_CMD_FLUSH_TX);
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	 
 }
@@ -161,7 +159,6 @@ void nrf24_flush_tx(void)
 void nrf24_flush_rx(void)
 {
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_FLUSH_RX);
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
@@ -170,7 +167,6 @@ static int nrf24_get_register(uint8_t reg)
 {
 	int ret = 0;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_R_REGISTER | reg);
 	ret = nrf24_send_byte(NRF24_CMD_NOP);
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
@@ -182,7 +178,6 @@ static void nrf24_get_address_register(uint8_t reg, uint8_t* result)
 {
 	int i;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_R_REGISTER | reg);
 	for(i=0;i<5;i++)
 	{
@@ -195,13 +190,10 @@ static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask)
 {
 	int ret;	 
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_R_REGISTER | reg);
 	ret = nrf24_send_byte(NRF24_CMD_NOP);
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);		 
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_W_REGISTER | reg);
 	nrf24_send_byte((ret & ~mask) | value);
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	
@@ -211,7 +203,6 @@ static void nrf24_write_payload(char* payload)
 {
 	int i;	 	
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
-	_delay_ms(NRF24_SPI_HALF_CLK);
 	nrf24_send_byte(NRF24_CMD_W_TX_PAYLOAD);	
 	for(i=0; i<4; i++)
 	{
@@ -233,6 +224,7 @@ static int nrf24_send_byte(uint8_t value)
 
 static int nrf24_bitbang(uint8_t value)
 {
+	_delay_ms(NRF24_SPI_HALF_CLK);
 	int i=0;
 	int ret=0;
 	for(i=7;i>=0;i--)

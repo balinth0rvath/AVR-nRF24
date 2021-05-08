@@ -11,7 +11,7 @@
 #include <avr/io.h>
 
 // Settings
-#define NRF24_SET_RECEIVER						0x0
+#define NRF24_SET_RECEIVER						0x1
 
 // SPI Port
 #define NRF24_DDR								DDRC
