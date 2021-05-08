@@ -17,6 +17,7 @@ static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask);
 static void nrf24_write_payload(char* payload);
 static int 	nrf24_send_byte(uint8_t value);
 static int nrf24_bitbang(uint8_t value);
+static int nrf24_spi(uint8_t value);
 
 struct nrf24_dev_t {
 	char payload_buffer[32];
@@ -33,7 +34,18 @@ void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 
 	if (g_use_spi)
 	{
+		SPCR = 0;
+		SPCR |= (1 << SPE);
+		SPCR |= (1 << MSTR);
+		SPCR &= ~(1 << CPOL);
+		SPCR &= ~(1 << CPHA);
+		SPSR |= ~(1 << SPR1);
 
+		DDRB |= (1 << PB2);										// SS output
+		DDRB |= (1 << PB3);										// MOSI PB3 output
+		DDRB &= ~(1 << PB4);									// MISO PB4 input
+		PORTB |= (1 << PB4);									// MISO PB4 pull up
+		DDRB |= (1 << PB5);										// SCLK PB5 output
 	} else
 	{
 		NRF24_DDR |= (1 << NRF24_GPIO_SCLK);						// SCLK output
@@ -47,13 +59,12 @@ void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 	if (!g_use_spi)
 	{
 		NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);						// SCLK 0	
+		NRF24_PORT != (1 << NRF24_GPIO_MISO);						// MISO pull up	
 	}	
-
-	NRF24_PORT != (1 << NRF24_GPIO_MISO);						// MISO pull up			
+			
 	NRF24_PORT_IRQ |= (1 << NRF24_GPIO_IRQ);					// IRQ pull up
-
 	MCUCR &= ~(1 << ISC00 | 1 << ISC01);						// active low IRQ	
-
+	
 	nrf24_flush_tx();
 	nrf24_flush_rx();
 	
@@ -213,7 +224,7 @@ static int nrf24_send_byte(uint8_t value)
 {	
 	if (g_use_spi)
 	{
-
+		return nrf24_spi(value);
 	} else
 	{
 		return nrf24_bitbang(value);
@@ -247,4 +258,11 @@ static int nrf24_bitbang(uint8_t value)
 	NRF24_PORT &= ~(1 << NRF24_GPIO_SCLK);
 	return ret;
 
+}
+
+static int nrf24_spi(uint8_t value)
+{
+	SPDR = value;
+	while (!(SPSR & (1 << SPIF)));
+	return SPDR;
 }

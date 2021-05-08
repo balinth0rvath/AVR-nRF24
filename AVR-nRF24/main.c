@@ -22,7 +22,7 @@ void transmitter(void)
 {	
 	
 	uint8_t status;	
-	nrf24_init(NRF24_SET_RECEIVER, 0);	
+	nrf24_init(NRF24_SET_RECEIVER, 1);	
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei(); 		
@@ -42,6 +42,7 @@ void transmitter(void)
 
 int main(void)
 {	
+	DDRD|=( 1 << PD0);	
 	if (NRF24_SET_RECEIVER)
 	{
 		receiver();			
