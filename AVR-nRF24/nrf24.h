@@ -11,7 +11,9 @@
 #include <avr/io.h>
 
 // Settings
-#define NRF24_SET_RECEIVER						0x1
+#define NRF24_SET_RECEIVER						0x0
+#define NRF24_PAYLOAD_LENGTH					0x4
+#define NRF24_PAYLOAD_BUFFER_SIZE				0x80
 
 // SPI Port
 #define NRF24_DDR								DDRC

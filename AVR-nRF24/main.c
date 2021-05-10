@@ -12,7 +12,7 @@
 
 void receiver(void)
 {
-    nrf24_init(NRF24_SET_RECEIVER, 1);
+    nrf24_init(NRF24_SET_RECEIVER, 0);
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei();     
@@ -22,7 +22,7 @@ void transmitter(void)
 {	
 	
 	uint8_t status;	
-	nrf24_init(NRF24_SET_RECEIVER, 1);	
+	nrf24_init(NRF24_SET_RECEIVER, 0);	
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei(); 		
@@ -30,15 +30,9 @@ void transmitter(void)
 	nrf24_transmit_packet(payload, &status);
 	payload[3] = 48;	
 	_delay_ms(500);	
-	
-	nrf24_transmit_packet(payload, &status);	
-	_delay_ms(500);
-	
 		
-	if (status & 0x20) // Data Sent TX FIFO success GREEN 500ms
-	{
-		while(1);
-	}	
+	nrf24_transmit_packet(payload, &status);	
+	_delay_ms(500);	
 }
 
 int main(void)
@@ -57,8 +51,8 @@ int main(void)
 
 ISR (INT0_vect)
 {	
-	nrf24_receive_irq();
-	//nrf24_transmit_irq();			
+	//nrf24_receive_irq();
+	nrf24_transmit_irq();			
 }
 
 

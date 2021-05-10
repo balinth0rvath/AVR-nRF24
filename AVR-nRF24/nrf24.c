@@ -19,11 +19,17 @@ static int 	nrf24_send_byte(uint8_t value);
 static int nrf24_bitbang(uint8_t value);
 static int nrf24_spi(uint8_t value);
 
-struct nrf24_dev_t {
-	char payload_buffer[32];
-} nrf24_dev;
-
 static int g_use_spi = 0;
+
+typedef struct  {
+	uint8_t id;
+	uint8_t source_address;
+	uint8_t value;	
+	uint8_t aux;
+} nrf24_payload_buffer_item_t;
+
+static volatile nrf24_payload_buffer_item_t g_nrf24_payload_buffer_list[NRF24_PAYLOAD_BUFFER_SIZE];
+static uint8_t g_item_index = 0;
 
 void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 {	
@@ -75,7 +81,8 @@ void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 	if (set_receiver)
 	{	
 		nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
-		nrf24_write_register(NRF24_REG_RX_PW_P0,4,0x3f);		// set payload length of 4 for pipe0	    
+		nrf24_write_register(NRF24_REG_RX_PW_P0, 
+			NRF24_PAYLOAD_LENGTH, 0x3f);						// set payload length for pipe0	    
 		nrf24_write_register(NRF24_REG_CONFIG,0x3,0x7);			// CRC 1 byte, RX pwr up			
 		NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
 	} else
@@ -114,12 +121,12 @@ void nrf24_receive_poll(void)
 void nrf24_receive_irq(void)
 {	
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
-	nrf24_read_payload();	
+	nrf24_read_payload();		
 }
 
 void nrf24_transmit_irq(void)
 {
-	int status = 0;
+	volatile int status = 0;
 	status = nrf24_get_register(NRF24_REG_STATUS);
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CE);
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);
@@ -128,17 +135,27 @@ void nrf24_transmit_irq(void)
 
 static void nrf24_read_payload(void)
 {
+	char payload_buffer[NRF24_PAYLOAD_LENGTH];
 	int i;
 	int ret;
 	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
 	nrf24_send_byte(NRF24_CMD_R_RX_PAYLOAD);
-	for(i=0; i<4; i++)
+	for(i=0; i < NRF24_PAYLOAD_LENGTH; i++)
 	{
 		ret = nrf24_send_byte(NRF24_CMD_NOP);
-		nrf24_dev.payload_buffer[i] = ret;
+		payload_buffer[i] = ret;
 	}
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
-	PORTD |= (1 << PD0);
+	g_nrf24_payload_buffer_list[g_item_index].id = payload_buffer[0];
+	g_nrf24_payload_buffer_list[g_item_index].source_address = payload_buffer[1];
+	g_nrf24_payload_buffer_list[g_item_index].value = payload_buffer[2];
+	g_nrf24_payload_buffer_list[g_item_index].aux = payload_buffer[3];
+	g_item_index++;
+	if (g_item_index == NRF24_PAYLOAD_BUFFER_SIZE)
+	{
+		g_item_index = 0;
+	}	
+	PORTD |= (1 << PD0);											// light green led as success 
 }
 
 void nrf24_transmit_packet(char* payload, uint8_t* status)
