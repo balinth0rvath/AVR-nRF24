@@ -11,7 +11,7 @@
 #include <avr/io.h>
 
 // Settings
-#define NRF24_SET_RECEIVER						0x0
+#define NRF24_SET_RECEIVER						0x1
 #define NRF24_PAYLOAD_LENGTH					0x4
 #define NRF24_PAYLOAD_BUFFER_SIZE				0x80
 
@@ -79,12 +79,15 @@
 
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
-void nrf24_init(uint8_t set_receiver, uint8_t use_spi);
+void nrf24_init(uint8_t use_spi);
+void nrf24_set_receiver();
+void nrf24_set_transmitter();
 void nrf24_receive_irq(void);
 void nrf24_transmit_irq(void);
 void nrf24_receive_poll(void);
 void nrf24_transmit_packet(char* payload, uint8_t* status);
 void nrf24_flush_tx(void);
 void nrf24_flush_rx(void);
+uint8_t nrf24_get_status(void);
 
 #endif /* NRF24_H_ */

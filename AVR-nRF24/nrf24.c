@@ -6,6 +6,7 @@
 #include "common.h"
 #include <avr/io.h>
 #include <util/delay.h>			// add this to use the delay function
+#include <avr/interrupt.h>
 #include "nrf24.h"
  
 static int 	nrf24_check_device();
@@ -28,10 +29,11 @@ typedef struct  {
 	uint8_t aux;
 } nrf24_payload_buffer_item_t;
 
-static volatile nrf24_payload_buffer_item_t g_nrf24_payload_buffer_list[NRF24_PAYLOAD_BUFFER_SIZE];
-static uint8_t g_item_index = 0;
+static volatile nrf24_payload_buffer_item_t g_payload_buffer_list[NRF24_PAYLOAD_BUFFER_SIZE];
+static uint8_t g_payload_buffer_head = 0;
+static uint8_t g_payload_buffer_tail = 0;
 
-void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
+void nrf24_init(uint8_t use_spi)
 {	
 	g_use_spi = use_spi;	
 	NRF24_DDR |= (1 << NRF24_GPIO_CE);							// CE output	
@@ -71,27 +73,41 @@ void nrf24_init(uint8_t set_receiver, uint8_t use_spi)
 	NRF24_PORT_IRQ |= (1 << NRF24_GPIO_IRQ);					// IRQ pull up
 	MCUCR &= ~(1 << ISC00 | 1 << ISC01);						// active low IRQ	
 	
+	
+}
+
+void nrf24_set_receiver()
+{
 	nrf24_flush_tx();
 	nrf24_flush_rx();
-	
+	NRF24_PORT &= ~(0 << NRF24_GPIO_CE);						// disable device
+	_delay_ms(2);
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
-	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel	
+	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel
 	nrf24_write_register(NRF24_REG_SETUP_RETR, 0xff, 0xff);		// delay and retry
 
-	if (set_receiver)
-	{	
-		nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
-		nrf24_write_register(NRF24_REG_RX_PW_P0, 
-			NRF24_PAYLOAD_LENGTH, 0x3f);						// set payload length for pipe0	    
-		nrf24_write_register(NRF24_REG_CONFIG,0x3,0x7);			// CRC 1 byte, RX pwr up			
-		NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
-	} else
-	{	
-		nrf24_write_register(NRF24_REG_CONFIG,0x2,0x7);			// CRC 1 byte, TX pwr up	
-	}			
+	nrf24_write_register(NRF24_REG_EN_AA, 0x1,0x1);			// enable auto ack on pipe0
+	nrf24_write_register(NRF24_REG_RX_PW_P0,
+	NRF24_PAYLOAD_LENGTH, 0x3f);						// set payload length for pipe0
+	nrf24_write_register(NRF24_REG_CONFIG,0x3,0x7);			// CRC 1 byte, RX pwr up
+	NRF24_PORT |= (1 << NRF24_GPIO_CE);						// enable device (receiver mode)
+	_delay_ms(2);
+}
+
+void nrf24_set_transmitter()
+{
+	nrf24_flush_tx();
+	nrf24_flush_rx();
+	NRF24_PORT &= ~(0 << NRF24_GPIO_CE);						// disable device
 	_delay_ms(2);
 
+	nrf24_write_register(NRF24_REG_RF_CH, 100,0x7f);			// channel
+	nrf24_write_register(NRF24_REG_SETUP_RETR, 0xff, 0xff);		// delay and retry
+	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
+	nrf24_write_register(NRF24_REG_CONFIG,0x2,0x7);			// CRC 1 byte, TX pwr up	
+	_delay_ms(2);
 }
+
 
 static int nrf24_check_device()
 {
@@ -146,14 +162,14 @@ static void nrf24_read_payload(void)
 		payload_buffer[i] = ret;
 	}
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
-	g_nrf24_payload_buffer_list[g_item_index].id = payload_buffer[0];
-	g_nrf24_payload_buffer_list[g_item_index].source_address = payload_buffer[1];
-	g_nrf24_payload_buffer_list[g_item_index].value = payload_buffer[2];
-	g_nrf24_payload_buffer_list[g_item_index].aux = payload_buffer[3];
-	g_item_index++;
-	if (g_item_index == NRF24_PAYLOAD_BUFFER_SIZE)
+	g_payload_buffer_list[g_payload_buffer_head].id = payload_buffer[0];
+	g_payload_buffer_list[g_payload_buffer_head].source_address = payload_buffer[1];
+	g_payload_buffer_list[g_payload_buffer_head].value = payload_buffer[2];
+	g_payload_buffer_list[g_payload_buffer_head].aux = payload_buffer[3];
+	g_payload_buffer_head++;
+	if (g_payload_buffer_head == NRF24_PAYLOAD_BUFFER_SIZE)
 	{
-		g_item_index = 0;
+		g_payload_buffer_head = 0;
 	}	
 	PORTD |= (1 << PD0);											// light green led as success 
 }
@@ -180,6 +196,15 @@ void nrf24_flush_rx(void)
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
  
+uint8_t nrf24_get_status(void)
+{
+	int ret = 0;
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
+	ret = nrf24_send_byte(NRF24_CMD_NOP);
+	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
+	return ret;
+}
+
 static int nrf24_get_register(uint8_t reg)
 {
 	int ret = 0;
