@@ -21,6 +21,7 @@ static int nrf24_bitbang(uint8_t value);
 static int nrf24_spi(uint8_t value);
 
 static int g_use_spi = 0;
+static uint8_t g_message_received = 0;
 
 typedef struct  {
 	uint8_t id;
@@ -137,7 +138,15 @@ void nrf24_receive_poll(void)
 void nrf24_receive_irq(void)
 {	
 	nrf24_write_register(NRF24_REG_STATUS,0x70,0x70);			// clear IRQ flags
-	nrf24_read_payload();		
+	nrf24_read_payload();	
+	g_message_received = 1;	
+}
+
+uint8_t nrf4_message_received(void)
+{
+	uint8_t ret = g_message_received;
+	g_message_received = 0;
+	return ret;
 }
 
 void nrf24_transmit_irq(void)

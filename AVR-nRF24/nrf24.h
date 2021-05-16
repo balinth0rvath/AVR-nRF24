@@ -89,5 +89,6 @@ void nrf24_transmit_packet(char* payload, uint8_t* status);
 void nrf24_flush_tx(void);
 void nrf24_flush_rx(void);
 uint8_t nrf24_get_status(void);
+uint8_t nrf4_message_received(void);
 
 #endif /* NRF24_H_ */

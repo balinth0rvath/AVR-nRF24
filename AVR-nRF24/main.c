@@ -10,7 +10,7 @@
 #include <avr/interrupt.h>
 #include "nrf24.h"
 
-void transmitter(void)
+void send_response(void)
 {	
 	uint8_t status;			
 	char payload[4] = {53,54,55,49};	
@@ -27,18 +27,21 @@ int main(void)
 {	
 	DDRD|=( 1 << PD0);	
 	nrf24_init(0);	
-	//nrf24_set_receiver();
-	nrf24_set_transmitter();
+	nrf24_set_receiver();	
 
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
-	sei();
-	transmitter();
-	/*
-	while(1);
+	sei();	
+	while(1)
 	{		
-	}
-	*/
+		_delay_ms(1000);
+		if (nrf4_message_received())			
+		{
+			_delay_ms(100);
+			nrf24_set_transmitter();
+			send_response();
+		}
+	}	
 }
 
 ISR (INT0_vect)
