@@ -79,6 +79,13 @@
 
 #define NRF24_REG_STATUS_DEFAULT				0x0e
 
+typedef struct  {
+	uint8_t id;
+	uint8_t source_address;
+	uint8_t value;
+	uint8_t aux;
+} nrf24_payload_buffer_item_t;
+
 void nrf24_init(uint8_t use_spi);
 void nrf24_set_receiver();
 void nrf24_set_transmitter();
@@ -88,6 +95,7 @@ void nrf24_receive_poll(void);
 void nrf24_transmit_packet(char* payload, uint8_t* status);
 void nrf24_flush_tx(void);
 void nrf24_flush_rx(void);
+void nrf24_get_buffer_head(nrf24_payload_buffer_item_t* item);
 uint8_t nrf24_get_status(void);
 uint8_t nrf4_message_received(void);
 

@@ -13,13 +13,18 @@
 void send_response(void)
 {	
 	uint8_t status;			
-	char payload[4] = {53,54,55,49};	
-	nrf24_transmit_packet(payload, &status);
-	payload[3] = 48;	
-	_delay_ms(500);	
+	char payload[4] = {};
+	nrf24_payload_buffer_item_t p;
+	nrf24_get_buffer_head(&p);
+	payload[0] = p.id;
+	payload[1] = p.source_address;
+	payload[2] = p.value;
+	payload[3] = p.aux;
+	nrf24_transmit_packet(payload, &status);	
+	_delay_ms(100);	
 		
 	nrf24_transmit_packet(payload, &status);	
-	_delay_ms(500);	
+	_delay_ms(100);	
 	
 }
 
@@ -27,19 +32,23 @@ int main(void)
 {	
 	DDRD|=( 1 << PD0);	
 	nrf24_init(0);	
+	
 	nrf24_set_receiver();	
 
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei();	
-	while(1)
+	
+	while(1)	
 	{		
-		_delay_ms(1000);
+		_delay_ms(100);
 		if (nrf4_message_received())			
 		{
 			_delay_ms(100);
 			nrf24_set_transmitter();
 			send_response();
+			_delay_ms(100);
+			nrf24_set_receiver();	
 		}
 	}	
 }

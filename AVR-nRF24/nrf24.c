@@ -23,13 +23,6 @@ static int nrf24_spi(uint8_t value);
 static int g_use_spi = 0;
 static uint8_t g_message_received = 0;
 
-typedef struct  {
-	uint8_t id;
-	uint8_t source_address;
-	uint8_t value;	
-	uint8_t aux;
-} nrf24_payload_buffer_item_t;
-
 static volatile nrf24_payload_buffer_item_t g_payload_buffer_list[NRF24_PAYLOAD_BUFFER_SIZE];
 static uint8_t g_payload_buffer_head = 0;
 static uint8_t g_payload_buffer_tail = 0;
@@ -125,6 +118,11 @@ static void nrf24_debug_status(void)
 		reg = nrf24_get_register(i);
 		reg = reg + a;
 	}
+}
+
+void nrf24_get_buffer_head(nrf24_payload_buffer_item_t* item)
+{
+	*item = g_payload_buffer_list[g_payload_buffer_head - 1];
 }
 
 void nrf24_receive_poll(void)
