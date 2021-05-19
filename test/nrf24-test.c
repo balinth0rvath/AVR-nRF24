@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include "nrf24-lib.h"
+#include "nrf24-test-cases.h"
 
 #define NRF24_IOCTL_SET_RECEIVER _IO(153,0)
 #define NRF24_IOCTL_SET_TRANSMITTER _IO(153,1)
