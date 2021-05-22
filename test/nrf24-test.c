@@ -5,38 +5,30 @@
 #include <sys/ioctl.h>
 #include "nrf24-lib.h"
 #include "nrf24-test-cases.h"
-
-#define NRF24_IOCTL_SET_RECEIVER _IO(153,0)
-#define NRF24_IOCTL_SET_TRANSMITTER _IO(153,1)
-
  
 int main(int argc, char *argv[])
 {
-	int fd;
+	char message[50] = "";
+	int fd=0;
 	int ret=0;
 	char c_out[64]= {};
 	char c_in[64]= {};
 	int count,i;
 	char opt = *argv[1];
-
 	int fail = 0;
 
-	fd = open("/dev/nrf24d", O_RDWR);
-	if (fd==0)
-	{
-		printf("cannot open driver\n");
-		exit(1);
-	}
-	printf("driver opened\n");
+	ret = nrf24_test_open(&fd, message);
+	printf("%s", message);	
+	
 	switch(opt)
 	{
 		case 't':
-			ret = ioctl(fd, NRF24_IOCTL_SET_TRANSMITTER, 0);		
+			ret = nrf24_lib_set_transmitter(fd);
 			printf("transmitter set: %i\n", ret);
 			break;
 
 		case 'e':
-			ret = ioctl(fd, NRF24_IOCTL_SET_RECEIVER, 0);		
+			ret = nrf24_lib_set_receiver(fd);		
 			printf("Receiver set: %i\n", ret);
 			break;
 
@@ -57,14 +49,14 @@ int main(int argc, char *argv[])
 			break;
 
 		case '1':
-			ret = ioctl(fd, NRF24_IOCTL_SET_TRANSMITTER, 0);		
+			ret = nrf24_lib_set_transmitter(fd);
 			c_out[0] = 1;
 			c_out[1] = 2;
 			c_out[2] = 3;
 			c_out[3] = 100;
 			c_out[4] = 0;
 			count = write(fd, c_out, 5);
-			ret = ioctl(fd, NRF24_IOCTL_SET_RECEIVER, 0);		
+			ret = nrf24_lib_set_receiver(fd);
 			sleep(1);
 			count = read(fd, c_in, 64);
 			if (count !=8)
