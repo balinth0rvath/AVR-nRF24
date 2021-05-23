@@ -15,7 +15,7 @@ https://github.com/balinth0rvath/AVR-nRF24/AVR-nRF24<br>
 Server <--> MCU1 <--> MCU2<br>
 Server <-bitbang SPI-> nRF24L01<br>
 MCU1 <-bitbang SPI-> nRF24L01<br>
-MCU1 <-HW SPI-> nRF24L01<br>
+MCU2 <-HW SPI-> nRF24L01<br>
 Server <-Ethernet-> Host<br>
 MCUx <-Atmel ICE SPI-> Host<br>
 
@@ -36,8 +36,12 @@ $ scp nrf24-test root@192.168.1.137:/home/root/.<br>
 
 Rpi:<br>
 $ insmod nrf24.ko<br>
-$ ./nrf24-test '1'<br> 
+$ ./nrf24-test<br> 
 
-20200517<br>
+20210517<br>
 linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
 AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
+
+20210523<br>
+linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932
+AVR-nRF24@master:7b25dc61fc849677e8bb6358456cee5dc74c7301
