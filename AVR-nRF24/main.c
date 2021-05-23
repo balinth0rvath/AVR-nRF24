@@ -31,10 +31,14 @@ void send_response(void)
 int main(void)
 {	
 	DDRD|=( 1 << PD0);	
+	PORTD &= ~(1 << PD0);
 	nrf24_init(0);	
-	
+	uint8_t rx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
+	uint8_t tx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
+	nrf24_set_rx_address_p0(rx_address);
+	nrf24_set_tx_address(tx_address);	
 	nrf24_set_receiver();	
-
+	
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei();	
@@ -44,10 +48,14 @@ int main(void)
 		_delay_ms(100);
 		if (nrf4_message_received())			
 		{
+			PORTD |= (1 << PD0);
 			_delay_ms(100);
+			PORTD &= ~(1 << PD0);
 			nrf24_set_transmitter();
 			send_response();
+			PORTD |= (1 << PD0);
 			_delay_ms(100);
+			PORTD &= ~(1 << PD0);
 			nrf24_set_receiver();	
 		}
 	}	

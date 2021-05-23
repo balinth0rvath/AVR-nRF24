@@ -89,6 +89,10 @@ typedef struct  {
 void nrf24_init(uint8_t use_spi);
 void nrf24_set_receiver();
 void nrf24_set_transmitter();
+void nrf24_set_rx_address_p0(uint8_t* address);
+void nrf24_set_tx_address(uint8_t* address);
+void nrf24_get_rx_address_p0(uint8_t* address);
+void nrf24_get_tx_address(uint8_t* address);
 void nrf24_receive_irq(void);
 void nrf24_transmit_irq(void);
 void nrf24_receive_poll(void);

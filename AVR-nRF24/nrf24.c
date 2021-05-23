@@ -16,6 +16,7 @@ static void nrf24_get_address_register(uint8_t reg, uint8_t* result);
 static void nrf24_read_payload(void);
 static void nrf24_write_register(uint8_t reg, uint8_t value, uint8_t mask);
 static void nrf24_write_payload(char* payload);
+static void nrf24_write_address(uint8_t reg, uint8_t* address);
 static int 	nrf24_send_byte(uint8_t value);
 static int nrf24_bitbang(uint8_t value);
 static int nrf24_spi(uint8_t value);
@@ -101,7 +102,6 @@ void nrf24_set_transmitter()
 	nrf24_write_register(NRF24_REG_CONFIG,0x2,0x7);			// CRC 1 byte, TX pwr up	
 	_delay_ms(2);
 }
-
 
 static int nrf24_check_device()
 {
@@ -223,6 +223,16 @@ static int nrf24_get_register(uint8_t reg)
 
 }
 
+void nrf24_get_rx_address_p0(uint8_t* address)
+{
+	nrf24_get_address_register(NRF24_REG_RX_ADDR_P0, address);
+}
+
+void nrf24_get_tx_address(uint8_t* address)
+{
+	nrf24_get_address_register(NRF24_REG_TX_ADDR, address);
+}
+
 static void nrf24_get_address_register(uint8_t reg, uint8_t* result)
 {
 	int i;
@@ -258,6 +268,29 @@ static void nrf24_write_payload(char* payload)
 		nrf24_send_byte(*(payload+i));				 
 	}
 	NRF24_PORT |= (1 << NRF24_GPIO_CSN);	
+}
+
+void nrf24_set_rx_address_p0(uint8_t* address)
+{
+	nrf24_write_address(NRF24_REG_RX_ADDR_P0, address);
+}
+
+void nrf24_set_tx_address(uint8_t* address)
+{
+	nrf24_write_address(NRF24_REG_TX_ADDR, address);
+}
+
+
+static void nrf24_write_address(uint8_t reg, uint8_t* address)
+{
+	int i;
+	NRF24_PORT &= ~(1 << NRF24_GPIO_CSN);
+	nrf24_send_byte(NRF24_CMD_W_REGISTER | reg);
+	for(i=0; i<5; i++)
+	{
+		nrf24_send_byte(*(address+i));
+	}
+	NRF24_PORT |= (1 << NRF24_GPIO_CSN);
 }
 
 static int nrf24_send_byte(uint8_t value)
