@@ -38,6 +38,9 @@ Rpi:<br>
 $ insmod nrf24.ko<br>
 $ ./nrf24-test<br> 
 
+MCU:
+Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms
+
 20210517<br>
 linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
 AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
