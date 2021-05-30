@@ -28,12 +28,34 @@ void send_response(void)
 	
 }
 
+static int blink(uint8_t number, uint8_t fast)
+{
+	int i=0;
+	for(i=0;i<number;i++)
+	{
+		PORTD ^= (1 << PD0);
+		if (fast)
+			_delay_ms(50);		
+		else
+			_delay_ms(300);		
+	}
+	PORTD &= ~(1 << PD0);
+}
+
 int main(void)
 {	
+	volatile int ret;
 	DDRD|=( 1 << PD0);	
 	PORTD &= ~(1 << PD0);
+	blink(1,0);
 	nrf24_init(0);	
-	uint8_t rx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
+	ret = nrf24_check_device();
+	if (ret!=0)
+	{
+		blink(10,0);
+	}
+
+	uint8_t rx_address[5] = { 0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
 	uint8_t tx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
 	nrf24_set_rx_address_p0(rx_address);
 	nrf24_set_tx_address(tx_address);	
@@ -48,14 +70,13 @@ int main(void)
 		_delay_ms(100);
 		if (nrf4_message_received())			
 		{
-			PORTD |= (1 << PD0);
-			_delay_ms(100);
-			PORTD &= ~(1 << PD0);
+			blink(5,1);
 			nrf24_set_transmitter();
 			send_response();
 			PORTD |= (1 << PD0);
-			_delay_ms(100);
+			//_delay_ms(100);
 			PORTD &= ~(1 << PD0);
+			blink(5,1);
 			nrf24_set_receiver();	
 		}
 	}	

@@ -9,7 +9,6 @@
 #include <avr/interrupt.h>
 #include "nrf24.h"
  
-static int 	nrf24_check_device();
 static void nrf24_debug_status(void);
 static int nrf24_get_register(uint8_t reg);
 static void nrf24_get_address_register(uint8_t reg, uint8_t* result);
@@ -103,7 +102,7 @@ void nrf24_set_transmitter()
 	_delay_ms(2);
 }
 
-static int nrf24_check_device()
+int nrf24_check_device()
 {
 	int ret = 0;
 	ret = nrf24_get_register(NRF24_REG_STATUS);

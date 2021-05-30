@@ -87,6 +87,7 @@ typedef struct  {
 } nrf24_payload_buffer_item_t;
 
 void nrf24_init(uint8_t use_spi);
+int nrf24_check_device();
 void nrf24_set_receiver();
 void nrf24_set_transmitter();
 void nrf24_set_rx_address_p0(uint8_t* address);
