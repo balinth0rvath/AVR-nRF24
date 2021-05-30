@@ -35,7 +35,7 @@ static int blink(uint8_t number, uint8_t fast)
 	{
 		PORTD ^= (1 << PD0);
 		if (fast)
-			_delay_ms(50);		
+			_delay_ms(10);		
 		else
 			_delay_ms(300);		
 	}
@@ -47,7 +47,7 @@ int main(void)
 	volatile int ret;
 	DDRD|=( 1 << PD0);	
 	PORTD &= ~(1 << PD0);
-	blink(1,0);
+	blink(2,0);
 	nrf24_init(0);	
 	ret = nrf24_check_device();
 	if (ret!=0)
@@ -71,12 +71,11 @@ int main(void)
 	
 	while(1)	
 	{		
-		_delay_ms(100);
+		_delay_ms(10);
 		//nrf24_get_rx_address_p0(rx_address2);
 		//nrf24_get_tx_address(tx_address2);
 		if (nrf4_message_received())			
-		{
-			blink(5,1);
+		{			
 			nrf24_set_transmitter();
 			send_response();
 			PORTD |= (1 << PD0);
