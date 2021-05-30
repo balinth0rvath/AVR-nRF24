@@ -7,7 +7,7 @@
 #include "nrf24-lib.h"
 #include "nrf24-test-cases.h"
 
-#define SLEEP_US 1000000 
+#define SLEEP_US 1300000 
  
 int main(int argc, char *argv[])
 {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	printf("%s", message);
 	usleep(SLEEP_US);
 */
-	for (i=0;i<10;i++)
+	for (i=0;i<1000;i++)
 	{
 		ret |= nrf24_test_set_transmitter(&fd, message);
 		printf("%s", message);	
