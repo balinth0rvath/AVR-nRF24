@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdio.h>
 #include "nrf24-lib.h"
 #include "nrf24-test-cases.h"
 
@@ -69,6 +70,46 @@ int nrf24_test_set_transmitter(int* fd, char* message)
 	return 0;
 }
 
+int nrf24_test_matching_address(int* fd, char* message)
+{
+ 	int ret = 0;
+	unsigned char target_address[5] = TARGET_MATCHING_ADDRESS;
+ 	char* message_fail = "Set matching address: failed\n";
+	char message_pass[ERROR_MESSAGE_SIZE] = "";
+	unsigned char octets[5] = TARGET_MATCHING_ADDRESS;
+	sprintf(message_pass,"Set matching address: passed %x:%x:%x:%x:%x \n",
+		target_address[0],
+		target_address[1],
+		target_address[2],
+		target_address[3],
+		target_address[4]
+	); 
+	ret = nrf24_lib_set_address(*fd, octets);
+	if (ret)
+	{
+		strncpy(message,message_fail, ERROR_MESSAGE_SIZE);
+		return -1;
+	} 
+	strncpy(message, message_pass, ERROR_MESSAGE_SIZE);
+	return 0;
+}
+
+int nrf24_test_different_address(int* fd, char* message)
+{
+ 	int ret = 0;
+ 	char* message_fail = "Set different address: failed\n";
+	char* message_pass = "Set different address: passed (1,2,3,4,5)\n";
+	unsigned char octets[5] = TARGET_BAD_ADDRESS;
+	ret = nrf24_lib_set_address(*fd, octets);
+	if (ret)
+	{
+		strncpy(message,message_fail, ERROR_MESSAGE_SIZE);
+		return -1;
+	} 
+	strncpy(message, message_pass, ERROR_MESSAGE_SIZE);
+	return 0;
+}
+
 int nrf24_test_send_data(int* fd, char* message)
 {
 	int count = 0;
@@ -108,4 +149,21 @@ int nrf24_test_receive_data(int* fd, char* message)
 	}
 	strncpy(message,message_pass,ERROR_MESSAGE_SIZE);
 	return 0;
+}
+
+int nrf24_test_receive_data_fail(int* fd, char* message)
+{
+	int ret = 0;
+ 	char* message_fail = "Receive data using bad address: failed\n";
+	char* message_pass = "Receive data using bad address: passed\n";
+	ret = nrf24_test_receive_data(fd, message);
+	if (!ret)
+	{
+		strncpy(message,message_fail, ERROR_MESSAGE_SIZE);
+		return -1;
+	} 
+	strncpy(message, message_pass, ERROR_MESSAGE_SIZE);
+	return 0;
+
+	
 }
