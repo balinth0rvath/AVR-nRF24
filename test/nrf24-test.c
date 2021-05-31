@@ -5,80 +5,47 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "nrf24-lib.h"
+#include "nrf24-test-steps.h"
 #include "nrf24-test-cases.h"
-
-#define SLEEP_US 1300000 
  
 int main(int argc, char *argv[])
 {
 	char message[ERROR_MESSAGE_SIZE] = "";
 	int fd=0;
 	int ret=0;
- 	int i=0;
 	int error=0;
-	char opt = *argv[1];
-
+	char opt = 0;
+	
+	if (argc!=1)
+	{
+		opt = *argv[1];
+	}
+	
 	ret = nrf24_test_open(&fd, message);
 	printf("%s", message);	
-/*
-	ret |= nrf24_test_matching_address(&fd, message);
-	printf("%s", message);
-	usleep(SLEEP_US);
-*/
-	for (i=0;i<1000;i++)
+
+	printf("*** Selected test ***\n");
+	switch(opt)
 	{
-		ret |= nrf24_test_set_transmitter(&fd, message);
-		printf("%s", message);	
-
-		ret |= nrf24_test_send_data(&fd, message);
-		printf("%s", message);	
-
-		ret |= nrf24_test_set_receiver(&fd, message);
-		printf("%s", message);	
-		usleep(SLEEP_US);
-
-		ret |= nrf24_test_receive_data(&fd, message);
-		printf("%s", message);	
-		usleep(SLEEP_US);
-		printf("%i",i);
-		if (ret)
-		{
-			error++;
-			ret = 0;
-		}
+		case '1':
+			printf("---------------------\n");
+			printf("| Test long loop    |\n");
+			printf("---------------------\n");
+			ret = test_longloop(&fd, &error, message);
+			break;
+		case '2':
+			printf("---------------------\n");
+			printf("| Test addresses    |\n");
+			printf("---------------------\n");
+			ret = test_addresses(&fd, &error, message);
+			break;
+		default:
+			printf("---------------------\n");
+			printf("| No test selected  |\n");
+			printf("---------------------\n");
+			break;
 	}
-/*
-	ret |= nrf24_test_different_address(&fd, message);
-	printf("%s", message);
-	ret |= nrf24_test_set_transmitter(&fd, message);
-	printf("%s", message);	
-	usleep(SLEEP_US);
 
-	ret |= nrf24_test_send_data(&fd, message);
-	printf("%s", message);	
-
-	ret |= nrf24_test_set_receiver(&fd, message);
-	printf("%s", message);	
-	usleep(SLEEP_US);
-
-	ret |= nrf24_test_receive_data(&fd, message);
-	printf("%s", message);	
-	ret |= nrf24_test_matching_address(&fd, message);
-	printf("%s", message);
-	usleep(SLEEP_US);
-	ret |= nrf24_test_set_transmitter(&fd, message);
-	printf("%s", message);	
-
-	ret |= nrf24_test_send_data(&fd, message);
-	printf("%s", message);	
-
-	ret |= nrf24_test_set_receiver(&fd, message);
-	printf("%s", message);	
-	usleep(SLEEP_US);
-
-	ret |= nrf24_test_receive_data(&fd, message);
-	printf("%s", message);	
-*/
 	ret |= nrf24_test_close(&fd, message);
 	printf("%s", message);	
 	usleep(SLEEP_US);
@@ -86,7 +53,7 @@ int main(int argc, char *argv[])
 	printf("Number of errors: %i\n", error);
 	if (!ret)
 	{
-		printf("ALL TESTS PASSED\n");
+		printf("ALL TEST STEPS PASSED\n");
 	} else
 	{
 		printf("**** TEST FAILED\n");
