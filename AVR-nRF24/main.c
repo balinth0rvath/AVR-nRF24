@@ -55,14 +55,10 @@ int main(void)
 		blink(10,0);
 	}
 
-	uint8_t rx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
-	uint8_t tx_address[5] = {0xe7, 0xe7, 0xe7, 0xe7, 0xe7};
-
-	volatile uint8_t rx_address2[5] = {};
-	volatile uint8_t tx_address2[5] = {};
+	uint8_t address[5] = {0x10, 0x20, 0x30, 0x40, 0x50};
 	
-	//nrf24_set_rx_address_p0(rx_address);
-	//nrf24_set_tx_address(tx_address);	
+	nrf24_set_rx_address_p0(address);
+	nrf24_set_tx_address(address);	
 	nrf24_set_receiver();	
 	
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
@@ -72,8 +68,6 @@ int main(void)
 	while(1)	
 	{		
 		_delay_ms(10);
-		//nrf24_get_rx_address_p0(rx_address2);
-		//nrf24_get_tx_address(tx_address2);
 		if (nrf4_message_received())			
 		{			
 			nrf24_set_transmitter();
