@@ -47,4 +47,8 @@ AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
 
 20210523<br>
 linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
-AVR-nRF24@master:7b25dc61fc849677e8bb6358456cee5dc74c7301
+AVR-nRF24@master:7b25dc61fc849677e8bb6358456cee5dc74c7301<br>
+
+20210531<br>
+linux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>
+AVR-nRF24@master:dd0c3b836620fbdc131a8c8d285148fa6ca5f2e6<br>
