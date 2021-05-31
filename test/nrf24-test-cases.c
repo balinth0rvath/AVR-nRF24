@@ -22,6 +22,11 @@ int test_longloop(int* fd, int* error, char* message)
 {
 	int i=0;
 	int ret=0;
+
+	ret |= nrf24_test_matching_address(fd, message);
+	printf("%s", message);
+	usleep(SLEEP_US);
+
 	for (i=0;i<1000;i++)
 	{
 		ret |= nrf24_test_set_transmitter(fd, message);
@@ -88,7 +93,7 @@ int test_addresses(int* fd, int* error, char* message)
 	printf("%s", message);	
 	usleep(SLEEP_US);
 
-	ret |= nrf24_test_receive_data(fd, message);
+	ret |= !nrf24_test_receive_data(fd, message);
 	printf("%s", message);	
 
 	return ret;
