@@ -22,10 +22,6 @@ MCUx <-Atmel ICE SPI-> Host<br>
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="1024" /> 
 </p>
-<p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/schematics_proto1.png" width="1024" /> 
-</p>
-
 
 ## Setup
 Host:<br> 
