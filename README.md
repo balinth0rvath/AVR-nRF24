@@ -20,6 +20,10 @@ Server <-Ethernet-> Host<br>
 MCUx <-Atmel ICE SPI-> Host<br>
 
 <p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/schematics.png" width="1024" /> 
+</p>
+
+<p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="1024" /> 
 </p>
 
