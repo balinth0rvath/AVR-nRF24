@@ -1,4 +1,4 @@
-Partlist exported from /home/balint/EAGLE/projects/nRF24-design/circuit.sch at 2021. 08. 17. 19:22
+Partlist exported from /home/balint/EAGLE/projects/nRF24-design/circuit.sch at 2021. 08. 17. 19:55
 
 Qty Value               Device                           Package               Parts  Description                                    MF MPN OC_FARNELL OC_NEWARK POPULARITY PROD_ID    SF_ID     VALUE
 1                       LED5MM                           LED_5MM               D1     LED (Generic)                                                                                                   
