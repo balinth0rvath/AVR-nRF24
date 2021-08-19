@@ -4,6 +4,8 @@ RPI Yocto using forked Kernel, custom nRF24L01 driver located in nRF24L01driver 
 https://github.com/balinth0rvath/linux<br>
 Unit tests, test library<br> 
 https://github.com/balinth0rvath/AVR-nRF24/tree/master/test<br> 
+Server app<br>
+https://github.com/balinth0rvath/AVR-nRF24/tree/master/server<br> 
 <br>
 <br>
 ### Sensor modules
