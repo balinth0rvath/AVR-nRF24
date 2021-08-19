@@ -8,4 +8,4 @@ server: $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 clean:
-	rm server wireless-device.o controller.o 
+	rm server *.o 
