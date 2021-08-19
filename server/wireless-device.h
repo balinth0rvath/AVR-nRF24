@@ -1,0 +1,4 @@
+class WirelessDevice {
+public:
+  WirelessDevice();
+};

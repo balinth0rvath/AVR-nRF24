@@ -1,4 +1,4 @@
-#include "nrf24-controller.h"
+#include "controller.h"
 
 int main()
 {

@@ -1,11 +1,11 @@
-DEPS = nrf24-controller.h 
-OBJ = nrf24-server.o nrf24-controller.o 
+DEPS = controller.h wireless-device.h
+OBJ = server.o wireless-device.o controller.o 
 
-%.o: %.c $(DEPS)
+%.o: %.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-nrf24-server: $(OBJ)
+server: $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS)
 
 clean:
-	rm nrf24-server nrf24-controller.o 
+	rm server wireless-device.o controller.o 
