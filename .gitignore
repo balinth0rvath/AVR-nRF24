@@ -3,3 +3,8 @@ AVR-nRF24/Release
 *.atsuo
 test/nrf24-test
 test/*.o
+server/**.o
+server/nrf24-server
+**tags
+**swp
+
