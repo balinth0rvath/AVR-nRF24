@@ -13,7 +13,7 @@
 NRF24Device::NRF24Device()
 {
   fd = open(deviceName, O_RDWR);
-  if (fd==0)
+  if (fd==-1)
   {
     throw std::exception();
   }
@@ -65,7 +65,11 @@ int NRF24Device::send(const std::vector<char>& data)
 std::vector<char> NRF24Device::receive()
 {
   std::vector<char> data {};
-
   return data;
+};
+
+std::unique_ptr<NRF24Device> NRF24DeviceBuilder::create() 
+{
+  return std::move(std::make_unique<NRF24Device>()); 
 }
 

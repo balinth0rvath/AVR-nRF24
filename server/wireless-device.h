@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <memory>
 
 class WirelessDevice {
 public:
@@ -23,4 +24,9 @@ public:
 private:
   static constexpr const char * deviceName = "/dev/nrf24d";
   int fd = 0;
+};
+
+class NRF24DeviceBuilder {
+public:
+  static std::unique_ptr<NRF24Device> create();
 };

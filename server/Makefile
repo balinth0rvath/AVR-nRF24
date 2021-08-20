@@ -1,3 +1,4 @@
+CXXFLAGS = -O2 -pipe -g -feliminate-unused-debug-types
 DEPS = controller.h wireless-device.h
 OBJ = server.o wireless-device.o controller.o 
 
