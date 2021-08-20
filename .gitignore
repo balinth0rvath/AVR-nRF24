@@ -4,7 +4,7 @@ AVR-nRF24/Release
 test/nrf24-test
 test/*.o
 server/**.o
-server/nrf24-server
+server/server
 **tags
 **swp
 
