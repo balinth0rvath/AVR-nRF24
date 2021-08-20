@@ -30,18 +30,41 @@ MCUx <-Atmel ICE SPI-> Host<br>
 </p>
 
 ## Setup
-Host:<br> 
+Server app:<br> 
+$ cd server<br>
+$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
+$ make<br> 
+$ scp server root@192.168.1.137:/home/root/.<br>
+
+Test app:<br> 
+$ cd test<br>
+$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
+$ make<br> 
+$ scp nrf24-test root@192.168.1.137:/home/root/.<br>
+
+
+Driver:<br>
 $ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
 $ make<br> 
 $ scp nrf24.ko root@192.168.1.137:/home/root/.<br>
-$ scp nrf24-test root@192.168.1.137:/home/root/.<br>
 
 Rpi:<br>
 $ insmod nrf24.ko<br>
 $ ./nrf24-test<br> 
+$ ./server
 
-MCU:
+MCU:<br>
 Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms
+
+## Remote debug server
+
+target:<br>
+$ gdbserver :1234 server
+
+host:<br>
+$ arm-poky-linux-gnueabi-gdb server
+(gdb) target remote 192.168.1.137:1234
+
 
 ## Release commits
 20210517<br>
