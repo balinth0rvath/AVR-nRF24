@@ -2410,7 +2410,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="SUPPLY3" library="SparkFun-PowerSymbols" deviceset="VCC" device=""/>
 <part name="FRAME1" library="SparkFun-Aesthetics" deviceset="FRAME-LETTER" device="">
 <attribute name="DESIGNER" value="Balint Horvath"/>
-<attribute name="REV" value="0.1"/>
+<attribute name="REV" value="1"/>
 </part>
 </parts>
 <sheets>
@@ -2482,12 +2482,12 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="SUPPLY3" gate="G$1" x="129.54" y="40.64" smashed="yes">
 <attribute name="VALUE" x="129.54" y="43.434" size="1.778" layer="96" align="bottom-center"/>
 </instance>
-<instance part="FRAME1" gate="G$1" x="-33.02" y="-43.18" smashed="yes"/>
-<instance part="FRAME1" gate="V" x="114.3" y="-43.18" smashed="yes">
-<attribute name="LAST_DATE_TIME" x="127" y="-41.91" size="2.54" layer="94" font="vector"/>
-<attribute name="SHEET" x="200.66" y="-41.91" size="2.54" layer="94" font="vector"/>
-<attribute name="DESIGNER" x="137.414" y="-32.004" size="2.7432" layer="94" font="vector"/>
-<attribute name="REV" x="203.2" y="-36.576" size="2.7432" layer="94" font="vector"/>
+<instance part="FRAME1" gate="G$1" x="-35.56" y="-43.18" smashed="yes"/>
+<instance part="FRAME1" gate="V" x="111.76" y="-43.18" smashed="yes">
+<attribute name="LAST_DATE_TIME" x="124.46" y="-41.91" size="2.54" layer="94" font="vector"/>
+<attribute name="SHEET" x="198.12" y="-41.91" size="2.54" layer="94" font="vector"/>
+<attribute name="DESIGNER" x="134.874" y="-32.004" size="2.7432" layer="94" font="vector"/>
+<attribute name="REV" x="200.66" y="-36.576" size="2.7432" layer="94" font="vector"/>
 </instance>
 </instances>
 <busses>

@@ -810,8 +810,8 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="41.91" y="35.56" size="0.6096" layer="27" font="vector" ratio="20" rot="R90" align="top-center"/>
 </element>
 <element name="FRAME1" library="SparkFun-Aesthetics" package="CREATIVE_COMMONS" value="FRAME-LETTER" x="52.705" y="3.175" smashed="yes">
-<attribute name="DESIGNER" value="Balint Horvath" x="52.705" y="3.175" size="1.778" layer="27" display="off"/>
-<attribute name="REV" value="1" x="52.705" y="3.175" size="1.778" layer="27" display="off"/>
+<attribute name="DESIGNER" value="" x="52.705" y="3.175" size="1.778" layer="27" display="off"/>
+<attribute name="REV" value="" x="52.705" y="3.175" size="1.778" layer="27" display="off"/>
 </element>
 </elements>
 <signals>
