@@ -29,4 +29,5 @@ private:
 class NRF24DeviceBuilder {
 public:
   static std::unique_ptr<NRF24Device> create();
+  static std::unique_ptr<NRF24Device> create(const std::vector<char>& address);
 };

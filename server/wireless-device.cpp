@@ -10,6 +10,10 @@
 #define NRF24_IOCTL_SET_TRANSMITTER _IO(153,1)
 #define NRF24_IOCTL_SET_ADDRESS _IOW(153,2, struct ADDRESS_T)
 
+struct ADDRESS_T {
+  unsigned char octet[5];
+};
+
 NRF24Device::NRF24Device()
 {
   fd = open(deviceName, O_RDWR);
@@ -49,11 +53,12 @@ void NRF24Device::setTransmitter()
 
 void NRF24Device::setAddress(const std::vector<char>& address)
 {
-/*
-  struct ADDRESS_T {
-    unsigned char octet[5];
-  } octets;
-*/
+
+  int ret = ioctl(fd, NRF24_IOCTL_SET_ADDRESS, (void*)&address);
+  if (ret == -1)
+  {
+    throw std::exception();
+  }
 }
 
 int NRF24Device::send(const std::vector<char>& data)
@@ -73,3 +78,10 @@ std::unique_ptr<NRF24Device> NRF24DeviceBuilder::create()
   return std::move(std::make_unique<NRF24Device>()); 
 }
 
+
+std::unique_ptr<NRF24Device> NRF24DeviceBuilder::create(const std::vector<char>& address)
+{
+  std::unique_ptr<NRF24Device> device = std::make_unique<NRF24Device>();
+  device->setAddress(address);
+  return device;
+}
