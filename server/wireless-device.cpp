@@ -80,7 +80,8 @@ int NRF24Device::send(const std::vector<char>& data)
 }
 std::vector<char> NRF24Device::receive()
 {
-  std::vector<char> data {};
+  std::vector<char> data(bufferSize);
+  int count = read(fd, &data[0], bufferSize);
   return data;
 };
 
