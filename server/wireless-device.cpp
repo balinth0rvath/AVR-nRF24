@@ -21,16 +21,18 @@ NRF24Device::NRF24Device()
   {
     throw std::exception();
   }
+  std::cout << "Device opened\n";
 }
 
 NRF24Device::~NRF24Device()
 {
   
   int ret = close(fd);
-  if (fd!=0)
+  if (ret!=0)
   {
     std::cout << "~NRF24Device close failed\n";
   } 
+  std::cout << "Device closed\n";
 }
 
 void NRF24Device::setReceiver()
@@ -53,8 +55,13 @@ void NRF24Device::setTransmitter()
 
 void NRF24Device::setAddress(const std::vector<char>& address)
 {
-
-  int ret = ioctl(fd, NRF24_IOCTL_SET_ADDRESS, (void*)&address);
+  ADDRESS_T addressStruct;
+  int i=0;
+  for(const char& octet : address)
+  {
+    addressStruct.octet[i++]=octet;
+  }
+  int ret = ioctl(fd, NRF24_IOCTL_SET_ADDRESS, (void*)&addressStruct);
   if (ret == -1)
   {
     throw std::exception();
@@ -63,7 +70,11 @@ void NRF24Device::setAddress(const std::vector<char>& address)
 
 int NRF24Device::send(const std::vector<char>& data)
 {
-  int retval;
+  int retval = write(fd,reinterpret_cast<const char*>(&data[0]), data.size());
+  if (retval != data.size())
+  {
+    throw std::exception();
+  }
   return retval;
 
 }

@@ -9,7 +9,7 @@ public:
   virtual void setAddress(const std::vector<char>& address) = 0;
   virtual int send(const std::vector<char>& data) = 0;
   virtual std::vector<char> receive() = 0;
-  virtual ~WirelessDevice() { std::cout << "WirelessDevice Base destructor called! \n";};
+  virtual ~WirelessDevice() {};
 };
 
 class NRF24Device : public WirelessDevice {
