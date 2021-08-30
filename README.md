@@ -2,6 +2,8 @@
 ### Server
 RPI Yocto using forked Kernel, custom nRF24L01 driver located in nRF24L01driver branch:<br>
 https://github.com/balinth0rvath/linux<br>
+Readme: https://github.com/balinth0rvath/linux/blob/nRF24L01driver/MEMO.md<br>
+<br>
 Unit tests, test library<br> 
 https://github.com/balinth0rvath/AVR-nRF24/tree/master/test<br> 
 Server app<br>
