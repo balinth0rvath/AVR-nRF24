@@ -12,7 +12,7 @@ https://github.com/balinth0rvath/AVR-nRF24/tree/master/server<br>
 <br>
 ### Sensor modules
 ATmega firmware<br> 
-https://github.com/balinth0rvath/AVR-nRF24/AVR-nRF24<br> 
+https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24<br> 
 <br>
 <br>
 ## Proto1
