@@ -22,17 +22,27 @@ Server <-Ethernet-> Host<br>
 MCUx <-Atmel ICE SPI-> Host<br>
 <br>
 <br>
+Server UML
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/server_uml.png" width="512" /> 
+</p>
+<br>
 Schematics
+<br>
 <br>
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/schematics.png" width="512" /> 
 </p>
+<br>
 Breadboard
+<br>
 <br>
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="512" /> 
 </p>
+<br>
 First prototype without sensors
+<br>
 <br>
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb1.jpg" width="256" /> 
