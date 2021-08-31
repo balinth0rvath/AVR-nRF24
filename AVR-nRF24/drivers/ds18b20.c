@@ -9,3 +9,13 @@
  #include <avr/io.h>
  #include <util/delay.h>
  #include "ds18b20.h"
+
+ void ds18b20_set_resolution(uint8_t resolution)
+ {
+
+ }
+
+ int ds18b20_read_temperature()
+ {
+    return 0;
+ }
