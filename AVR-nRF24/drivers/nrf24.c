@@ -3,9 +3,10 @@
 *
 * Created: 4/30/2021 4:40:35 PM
 */ 
+
 #include "common.h"
 #include <avr/io.h>
-#include <util/delay.h>			// add this to use the delay function
+#include <util/delay.h>
 #include <avr/interrupt.h>
 #include "nrf24.h"
  
