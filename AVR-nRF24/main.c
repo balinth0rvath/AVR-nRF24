@@ -48,7 +48,7 @@ void send_dummy_packet(void)
 	
 }
 
-static int blink(uint8_t number, uint8_t fast)
+static void blink(uint8_t number, uint8_t fast)
 {
 	int i=0;
 	for(i=0;i<number;i++)
@@ -64,21 +64,18 @@ static int blink(uint8_t number, uint8_t fast)
 
 int main(void)
 {	
-	volatile int ret;
+  volatile int ret;	
 	DDRD|=( 1 << PD0);	
 	PORTD &= ~(1 << PD0);
 	blink(2,0);
 	nrf24_init(0);	
-	ret = nrf24_check_device();
-	/*
+	ret = nrf24_check_device();	
+  /*
 	if (ret!=0)
 	{
-		blink(10,0);
+		blink(10,1);
 	}
 	*/
-
-
-
 	uint8_t address[5] = {0x10, 0x20, 0x30, 0x40, 0x50};
 	
 	nrf24_set_rx_address_p0(address);

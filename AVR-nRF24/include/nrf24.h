@@ -46,7 +46,7 @@
 #define NRF24_CMD_ACTIVATE                0x50
 #define NRF24_CMD_R_RX_PL_WID             0x60
 #define NRF24_CMD_W_ACK_PAYLOAD           0xa8
-#define NRF24_CMD_W_TX_PAYLOAD_NO_ACK			0xb0
+#define NRF24_CMD_W_TX_PAYLOAD_NO_ACK     0xb0
 #define NRF24_CMD_NOP                     0xff
 
 // nRF24 registers
@@ -80,10 +80,10 @@
 #define NRF24_REG_STATUS_DEFAULT          0x0e
 
 typedef struct  {
-	uint8_t id;
-	uint8_t source_address;
-	uint8_t value;
-	uint8_t aux;
+  uint8_t id;
+  uint8_t source_address;
+  uint8_t value;
+  uint8_t aux;
 } nrf24_payload_buffer_item_t;
 
 void nrf24_init(uint8_t use_spi);
