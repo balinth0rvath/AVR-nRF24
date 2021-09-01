@@ -40,11 +40,23 @@
 #define DS18B20_REG_CRC                 0x08
 
 // DS18B20 timings
+// Init procedure
 #define DS18B20_TM_RESET_PULSE_US       500
 #define DS18B20_TM_WAIT_RESET_US        15
 #define DS18B20_TM_PRESENCE_SLICE_US    20              // This one and one below means waiting for 300us with 20us sample period
 #define DS18B20_TM_PRESENCE_COUNT       15
 #define DS18B20_TM_WAIT_PRESENCE_US     200             
+
+// Time slot timings
+#define DS18B20_TM_WRITE_FULL_SLOT_LENGTH_US    100
+#define DS18B20_TM_WRITE_1_SLOT_LENGTH_US       5
+#define DS18B20_TM_READ_FULL_SLOT_LENGTH_US     100
+#define DS18B20_TM_READ_INIT_LENGTH_US          2
+#define DS18B20_TM_READ_SAMPLE_AFTER_INIT_US    10
+#define DS18B20_TM_RELEASE_SLOT_US              2
+
+#define DS18B20_MAX_CONVERSION_TIME_MS          750
+
 
 int ds18b20_init_driver(void);
 void ds18b20_set_resolution(uint8_t resolution);
