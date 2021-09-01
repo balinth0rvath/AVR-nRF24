@@ -1,7 +1,9 @@
 /*
 * nrf24.c
 *
-* Created: 4/30/2021 4:40:35 PM
+* Created: 4/30/2021 4:40:35 P
+*
+* author: balinth0rvath 
 */ 
 
 #include "common.h"

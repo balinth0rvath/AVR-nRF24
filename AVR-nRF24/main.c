@@ -2,6 +2,8 @@
  * AVR-nRF24.c
  *
  * Created: 4/30/2021 3:04:23 PM
+ *
+ * author: balinth0rvath 
  */ 
 
  #undef ONE_PACKET 

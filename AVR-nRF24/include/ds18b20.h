@@ -2,6 +2,8 @@
  * ds18b20.h
  *
  * Created: 8/31/2021 4:19:25 PM
+ *
+ * author: balinth0rvath 
  */ 
 
 #ifndef DS18B20_H_
