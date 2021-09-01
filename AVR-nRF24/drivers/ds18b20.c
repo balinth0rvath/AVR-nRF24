@@ -2,6 +2,8 @@
  * ds18b20.c
  *
  * Created: 8/31/2021 4:19:00 PM
+ *
+ * author: balinth0rvath 
  */ 
 
 #include "common.h"
