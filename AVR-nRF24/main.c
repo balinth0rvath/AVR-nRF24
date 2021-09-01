@@ -4,14 +4,16 @@
  * Created: 4/30/2021 3:04:23 PM
  */ 
 
- #define ONE_PACKET 1
- #define TEST_LONGLOOP 0
+ #undef ONE_PACKET 
+ #undef TEST_LONGLOOP
+ #define TEST_SENSOR
 
 #include "common.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "nrf24.h"
+#include "ds18b20.h"
 
 
 void send_response(void)
@@ -66,8 +68,10 @@ int main(void)
 {	
   volatile int ret;	
 	DDRD|=( 1 << PD0);	
-	PORTD &= ~(1 << PD0);
-	blink(2,0);
+  PORTD &= ~(1 << PD0);
+
+  
+	//blink(2,0);
 	nrf24_init(0);	
 	ret = nrf24_check_device();	
   /*
@@ -112,6 +116,10 @@ int main(void)
 		}
 	}	
 #endif //TEST_LONGLOOP
+
+#ifdef TEST_SENSOR
+  ds18b20_init_driver();
+#endif // TEST_SENSOR
 }
 
 ISR (INT0_vect)
