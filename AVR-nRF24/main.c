@@ -6,9 +6,12 @@
  * author: balinth0rvath 
  */ 
 
- #undef ONE_PACKET 
+ #undef INIT_SETUP
+ #undef TEST_BLINK 
+ #undef TEST_ONE_PACKET 
  #undef TEST_LONGLOOP
  #define TEST_SENSOR
+ 
 
 #include "common.h"
 #include <avr/io.h>
@@ -59,11 +62,14 @@ static void blink(uint8_t number, uint8_t fast)
 	{
 		PORTD ^= (1 << PD0);
 		if (fast)
-			_delay_ms(10);		
+    {
+			//_delay_us(1);		
+    }
 		else
+    {
 			_delay_ms(300);		
-	}
-	PORTD &= ~(1 << PD0);
+    }
+	}	
 }
 
 int main(void)
@@ -72,7 +78,7 @@ int main(void)
 	DDRD|=( 1 << PD0);	
   PORTD &= ~(1 << PD0);
 
-  
+#ifdef INIT_SETUP
 	//blink(2,0);
 	nrf24_init(0);	
 	ret = nrf24_check_device();	
@@ -91,8 +97,20 @@ int main(void)
 	EICRA &= ~(1 << ISC00 | 1 << ISC01);
 	EIMSK |= (1 << INT0);
 	sei();	
-	
-#ifdef ONE_PACKET
+#endif // INIT_SETUP	
+
+#ifdef TEST_BLINK
+  _delay_ms(1000);	
+  int i = 20;
+  while(i--)
+  {
+    PORTD ^= (1 << PD0);
+    _delay_ms(200);	
+  }
+  while(1);
+#endif // TEST_BLINK
+
+#ifdef TEST_ONE_PACKET
 	nrf24_set_transmitter();
 	_delay_ms(10);
 	send_dummy_packet();
@@ -120,7 +138,9 @@ int main(void)
 #endif //TEST_LONGLOOP
 
 #ifdef TEST_SENSOR
+
   ds18b20_init_driver();
+  volatile int temperature = ds18b20_read_temperature() >> 4;  
 #endif // TEST_SENSOR
 }
 
