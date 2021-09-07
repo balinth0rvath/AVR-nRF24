@@ -14,12 +14,12 @@
 
 static int ds18b20_init_proc(void);
 static int ds18b20_skip_rom(void);
-static int ds18b20_write_stratchpad(uint8_t* data);
-static int ds18b20_read_stratchpad(uint8_t* data);
-static int ds18b20_copy_stratchpad(void);
-static int ds18b20_recall_e(void);
-static int ds18b20_read_power_supply(uint8_t* data);
-static int ds18b20_convert_t(void);
+static void ds18b20_write_stratchpad(uint8_t* data);
+static void ds18b20_read_stratchpad(uint8_t* data);
+static void ds18b20_copy_stratchpad(void);
+static void ds18b20_recall_e(void);
+static int ds18b20_read_power_supply(void);
+static void ds18b20_convert_t(void);
 
 static void ds18b20_write_byte(uint8_t byte);
 static uint8_t ds18b20_read_byte();
@@ -30,10 +30,9 @@ static uint8_t ds18b20_read_slot(void);
 static void ds18b20_release(void);
 static void ds18b20_pull_low(void);
 
-int ds18b20_init_driver(void)
+void ds18b20_init_driver(void)
 {  
-  ds18b20_release();
-  return ds18b20_init_proc();
+  ds18b20_release();  
 }
 
 void ds18b20_set_resolution(uint8_t resolution)
@@ -44,27 +43,25 @@ void ds18b20_set_resolution(uint8_t resolution)
 int ds18b20_read_temperature()
 {
   int ret = 0;
-  int data[9];
+  uint8_t data[9];
+  ret = ds18b20_skip_rom();
+  if (ret==-1)
+  {
+    return ret;
+  }  
+  ds18b20_convert_t();
+  
+  _delay_ms(DS18B20_MAX_CONVERSION_TIME_MS);
+  
   ret = ds18b20_skip_rom();
   if (ret==-1)
   {
     return ret;
   }
-  ret = ds18b20_convert_t();
-  if (ret==-1)
-  {
-    return ret;
-  }
-  _delay_ms(DS18B20_MAX_CONVERSION_TIME_MS);
-
-  ret = ds18b20_read_stratchpad(&data[0]);
-  if (ret==-1)
-  {
-    return ret;
-  }
-  
-  int temp_low = data[DS18B20_REG_TEMP_LSB];
-  int temp_high = data[DS18B20_REG_TEMP_MSB]; 
+  ds18b20_read_stratchpad(&data[0]);
+    
+  uint8_t temp_low = data[DS18B20_REG_TEMP_LSB];
+  uint8_t temp_high = data[DS18B20_REG_TEMP_MSB]; 
   return (temp_low | (temp_high << 8));
 }
 
@@ -91,67 +88,44 @@ static int ds18b20_skip_rom(void)
   return ret;
 }
 
-static int ds18b20_write_stratchpad(uint8_t* data)
-{
-  int ret = ds18b20_init_proc();
-  if (ret !=-1)
+static void ds18b20_write_stratchpad(uint8_t* data)
+{  
+  ds18b20_write_byte(DS18B20_CMD_WRITE_SCRATCHPAD);
+  for(int i=0;i<3;i++)
   {
-    ds18b20_write_byte(DS18B20_CMD_WRITE_SCRATCHPAD);
-    for(int i=0;i<3;i++)
-    {
-      ds18b20_write_byte(*(data+i));  
-    }
+    ds18b20_write_byte(*(data+i));  
+  }  
+}
+
+static void ds18b20_read_stratchpad(uint8_t* data)
+{
+  ds18b20_write_byte(DS18B20_CMD_READ_SCRATCHPAD);
+  for(int i=0;i<9;i++)
+  {
+    *(data+i) = ds18b20_read_byte();
   }
+}
+
+static void ds18b20_copy_stratchpad(void)
+{
+  ds18b20_write_byte(DS18B20_CMD_COPY_SCRATCHPAD);
+}
+
+static void ds18b20_recall_e(void)
+{  
+  ds18b20_write_byte(DS18B20_CMD_RECALL_E);  
+}
+
+static int ds18b20_read_power_supply(void)
+{
+  uint8_t ret = 0;    
+  ret = ds18b20_read_slot(); 
   return ret;
 }
 
-static int ds18b20_read_stratchpad(uint8_t* data)
-{
-  int ret = ds18b20_init_proc();
-  if (ret !=-1)
-  {
-    ds18b20_write_byte(DS18B20_CMD_READ_SCRATCHPAD);
-    for(int i=0;i<9;i++)
-    {
-      *(data+i) = ds18b20_read_byte();
-    }
-  }   
-  return ret; 
-}
-
-static int ds18b20_copy_stratchpad(void)
-{
-  int ret = ds18b20_init_proc();
-  if (ret !=-1)
-  {
-    ds18b20_write_byte(DS18B20_CMD_COPY_SCRATCHPAD);
-  }
-  return ret;
-}
-
-static int ds18b20_recall_e(void)
-{
-  int ret = ds18b20_init_proc();
-  if (ret !=-1)
-  {
-    ds18b20_write_byte(DS18B20_CMD_RECALL_E);
-  }
-  return ret;
-}
-
-static int ds18b20_read_power_supply(uint8_t* data)
-{
-  return 0;
-}
-
-static int ds18b20_convert_t(void)
-{
-  int ret = ds18b20_init_proc();
-  if (ret !=-1)
-  {
-    ds18b20_write_byte(DS18B20_CMD_CONVERT_T);
-  }
-  return ret;
+static void ds18b20_convert_t(void)
+{  
+  ds18b20_write_byte(DS18B20_CMD_CONVERT_T);
 }
 
 static void ds18b20_write_byte(uint8_t byte)

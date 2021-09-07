@@ -50,17 +50,17 @@
 #define DS18B20_TM_WAIT_PRESENCE_US     200             
 
 // Time slot timings
-#define DS18B20_TM_WRITE_FULL_SLOT_LENGTH_US    100
-#define DS18B20_TM_WRITE_1_SLOT_LENGTH_US       5
-#define DS18B20_TM_READ_FULL_SLOT_LENGTH_US     100
-#define DS18B20_TM_READ_INIT_LENGTH_US          2
+#define DS18B20_TM_WRITE_FULL_SLOT_LENGTH_US    80
+#define DS18B20_TM_WRITE_1_SLOT_LENGTH_US       5 // lehet 2
+#define DS18B20_TM_READ_FULL_SLOT_LENGTH_US     80
+#define DS18B20_TM_READ_INIT_LENGTH_US          5
 #define DS18B20_TM_READ_SAMPLE_AFTER_INIT_US    10
-#define DS18B20_TM_RELEASE_SLOT_US              2
+#define DS18B20_TM_RELEASE_SLOT_US              5
 
 #define DS18B20_MAX_CONVERSION_TIME_MS          750
 
 
-int ds18b20_init_driver(void);
+void ds18b20_init_driver(void);
 void ds18b20_set_resolution(uint8_t resolution);
 int ds18b20_read_temperature();
 
