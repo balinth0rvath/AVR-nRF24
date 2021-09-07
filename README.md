@@ -50,6 +50,11 @@ First prototype without sensors
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb1.jpg" width="256" /> 
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb2.jpg" width="256" /> 
 </p>
+<br>
+DS18B20 Sequence of determining external power supply mode
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/read_power_supply_sequence.png" width="512" /> 
+</p>
 
 ## Setup
 Server app:<br> 
