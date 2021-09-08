@@ -41,10 +41,9 @@ void ds18b20_set_resolution(uint8_t resolution)
 }
 
 int ds18b20_read_temperature()
-{
-  int ret = 0;
+{  
   uint8_t data[9];
-  ret = ds18b20_skip_rom();
+  int ret = ds18b20_skip_rom();
   if (ret==-1)
   {
     return ret;
@@ -52,7 +51,6 @@ int ds18b20_read_temperature()
   ds18b20_convert_t();
   
   _delay_ms(DS18B20_MAX_CONVERSION_TIME_MS);
-  
   ret = ds18b20_skip_rom();
   if (ret==-1)
   {
@@ -63,6 +61,16 @@ int ds18b20_read_temperature()
   uint8_t temp_low = data[DS18B20_REG_TEMP_LSB];
   uint8_t temp_high = data[DS18B20_REG_TEMP_MSB]; 
   return (temp_low | (temp_high << 8));
+}
+
+int ds18b20_is_external_power_supply()
+{
+  int ret = ds18b20_skip_rom();
+  if (ret==-1)
+  {
+    return ret;
+  }
+  return ds18b20_read_power_supply();  
 }
 
 static int ds18b20_init_proc(void)
@@ -118,9 +126,10 @@ static void ds18b20_recall_e(void)
 
 static int ds18b20_read_power_supply(void)
 {
-  uint8_t ret = 0;    
+  uint8_t ret = 0;   
+  ds18b20_write_byte(DS18B20_CMD_READ_POWER_SUPPLY);   
   ret = ds18b20_read_slot(); 
-  return ret;
+  return ret != 0;
 }
 
 static void ds18b20_convert_t(void)

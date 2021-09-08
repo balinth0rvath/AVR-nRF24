@@ -63,5 +63,6 @@
 void ds18b20_init_driver(void);
 void ds18b20_set_resolution(uint8_t resolution);
 int ds18b20_read_temperature();
+int ds18b20_is_external_power_supply();
 
 #endif /* DS18B20_H_ */
