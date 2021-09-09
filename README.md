@@ -93,7 +93,7 @@ $ arm-poky-linux-gnueabi-gdb server
 (gdb) target remote 192.168.1.137:1234
 
 
-## Release commits
+## Release commits (test longloop)
 20210517<br>
 linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
 AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
@@ -108,5 +108,9 @@ AVR-nRF24@master:dd0c3b836620fbdc131a8c8d285148fa6ca5f2e6<br>
 
 20210820<br>
 linux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>
-AVR-nRF24@master:5c61a1c3e08124cf29ecca4751b73a7c155e9e8<br>
+AVR-nRF24@master:85c61a1c3e08124cf29ecca4751b73a7c155e9e8<br>
+
+20210909<br>
+linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>
+AVR-nRF24@master:ca4479ed1e2c967fedf4eaf3a40d907f1cda15d0<br>
 

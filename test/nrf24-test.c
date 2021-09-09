@@ -39,6 +39,12 @@ int main(int argc, char *argv[])
 			printf("---------------------\n");
 			ret = test_addresses(&fd, &error, message);
 			break;
+		case '3':
+			printf("---------------------\n");
+			printf("| Test temperature   |\n");
+			printf("---------------------\n");
+			ret = test_temperature(&fd, &error, message);
+			break;
 		default:
 			printf("---------------------\n");
 			printf("| No test selected  |\n");

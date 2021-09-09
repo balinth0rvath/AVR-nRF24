@@ -151,6 +151,29 @@ int nrf24_test_receive_data(int* fd, char* message)
 	return 0;
 }
 
+int nrf24_test_receive_temperature(int* fd, char* message)
+{
+	int ret = 0;
+	int count = 0;
+	int i = 0;
+ 	char* message_fail_size = "Receive data: failed (different sized payload receive)\n";
+ 	char* message_fail_diff = "Receive data: failed (Not valid temperature)\n";
+	char* message_pass = "Receive valid temperature: passed\n";
+	count = read(*fd, g_c_in, 64);
+	if (count !=8)
+	{
+		strncpy(message,message_fail_size,ERROR_MESSAGE_SIZE);
+		return -1;
+	}			
+  if (g_c_in[2]<15 || g_c_in[2]>35)
+  {
+    strncpy(message,message_fail_diff,ERROR_MESSAGE_SIZE);
+    return -1;
+  }
+	strncpy(message,message_pass,ERROR_MESSAGE_SIZE);
+	return 0;
+}
+
 int nrf24_test_receive_data_fail(int* fd, char* message)
 {
 	int ret = 0;

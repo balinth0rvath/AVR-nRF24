@@ -99,3 +99,35 @@ int test_addresses(int* fd, int* error, char* message)
 	return ret;
 }
 
+/*********************************************************
+	Test temperature sensor
+  --------------
+	Sends one packet, then receives two packets 
+  Test is OK if a value arrives in range 15..35 
+
+*********************************************************/
+int test_temperature(int* fd, int* error, char* message)
+{
+	int i=0;
+	int ret=0;
+
+	ret |= nrf24_test_matching_address(fd, message);
+	printf("%s", message);
+	usleep(SLEEP_US);
+
+  ret |= nrf24_test_set_transmitter(fd, message);
+  printf("%s", message);	
+
+  ret |= nrf24_test_send_data(fd, message);
+  printf("%s", message);	
+
+  ret |= nrf24_test_set_receiver(fd, message);
+  printf("%s", message);	
+  usleep(SLEEP_US);
+
+  ret |= nrf24_test_receive_temperature(fd, message);
+  printf("%s", message);	
+  usleep(SLEEP_US);
+	return ret;
+}
+
