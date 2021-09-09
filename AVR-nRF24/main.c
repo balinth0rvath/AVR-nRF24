@@ -9,8 +9,8 @@
  #define INIT_SETUP
  #undef TEST_BLINK 
  #undef TEST_ONE_PACKET 
- #define TEST_LONGLOOP
- #undef TEST_SENSOR
+ #undef TEST_LONGLOOP
+ #define TEST_SENSOR
  
 
 #include "common.h"
@@ -21,9 +21,8 @@
 #include "ds18b20.h"
 
 
-void send_response(void)
-{	
-	uint8_t status;			
+void send_response_with_head(void)
+{					
 	char payload[4] = {};
 	nrf24_payload_buffer_item_t p;
 	nrf24_get_buffer_head(&p);
@@ -31,12 +30,30 @@ void send_response(void)
 	payload[1] = p.source_address;
 	payload[2] = p.value;
 	payload[3] = p.aux;
-	nrf24_transmit_packet(payload, &status);	
-	_delay_ms(100);	
-		
-	nrf24_transmit_packet(payload, &status);	
-	_delay_ms(100);	
+	send_response(payload);
 	
+}
+
+void send_response_with_temperature(void)
+{  
+  char payload[4] = {};
+  payload[0] = 0;
+  payload[1] = 0;
+  payload[2] = ds18b20_read_temperature() >> 4;
+  payload[3] = 0;
+  send_response(payload);
+  
+}
+
+void send_response(char* payload)
+{
+  uint8_t status;
+  nrf24_transmit_packet(payload, &status);
+  _delay_ms(100);
+  
+  nrf24_transmit_packet(payload, &status);
+  _delay_ms(100);
+  
 }
 
 void send_dummy_packet(void)
@@ -127,7 +144,7 @@ int main(void)
 		if (nrf4_message_received())			
 		{			      
 			nrf24_set_transmitter();
-			send_response();
+			send_response_with_head();
 			
 			blink(8,1);
 			nrf24_set_receiver();	
@@ -138,7 +155,19 @@ int main(void)
 #ifdef TEST_SENSOR
 
   ds18b20_init_driver();
-  volatile int temperature = ds18b20_read_temperature() >> 4;  
+  nrf24_set_receiver();
+  while(1)
+  {
+    _delay_ms(10);
+    if (nrf4_message_received())
+    {
+      nrf24_set_transmitter();
+      send_response_with_temperature();
+      
+      blink(8,1);
+      nrf24_set_receiver();
+    }
+  }  
 #endif // TEST_SENSOR
 }
 
