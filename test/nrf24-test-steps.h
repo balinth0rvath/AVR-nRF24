@@ -11,4 +11,5 @@ int nrf24_test_matching_address(int* fd, char* message);
 int nrf24_test_different_address(int* fd, char* message);
 int nrf24_test_send_data(int* fd, char* message);
 int nrf24_test_receive_data(int* fd, char* message);
+int nrf24_test_receive_temperature(int* fd, char* message);
 int nrf24_test_receive_data_fail(int* fd, char* message);
