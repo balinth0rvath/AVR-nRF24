@@ -6,11 +6,11 @@
  * author: balinth0rvath 
  */ 
 
- #undef INIT_SETUP
+ #define INIT_SETUP
  #undef TEST_BLINK 
  #undef TEST_ONE_PACKET 
- #undef TEST_LONGLOOP
- #define TEST_SENSOR
+ #define TEST_LONGLOOP
+ #undef TEST_SENSOR
  
 
 #include "common.h"
@@ -63,7 +63,7 @@ static void blink(uint8_t number, uint8_t fast)
 		PORTD ^= (1 << PD0);
 		if (fast)
     {
-			//_delay_us(1);		
+			_delay_ms(50);		
     }
 		else
     {
@@ -82,12 +82,12 @@ int main(void)
 	//blink(2,0);
 	nrf24_init(0);	
 	ret = nrf24_check_device();	
-  /*
+  
 	if (ret!=0)
 	{
 		blink(10,1);
 	}
-	*/
+	
 	uint8_t address[5] = {0x10, 0x20, 0x30, 0x40, 0x50};
 	
 	nrf24_set_rx_address_p0(address);
@@ -125,13 +125,11 @@ int main(void)
 	{		
 		_delay_ms(10);
 		if (nrf4_message_received())			
-		{			
+		{			      
 			nrf24_set_transmitter();
 			send_response();
-			PORTD |= (1 << PD0);
-			//_delay_ms(100);
-			PORTD &= ~(1 << PD0);
-			blink(5,1);
+			
+			blink(8,1);
 			nrf24_set_receiver();	
 		}
 	}	

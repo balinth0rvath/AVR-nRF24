@@ -106,10 +106,8 @@ void nrf24_set_transmitter()
 }
 
 int nrf24_check_device()
-{
-	int ret = 0;
-	ret = nrf24_get_register(NRF24_REG_STATUS);
-	return (ret != NRF24_REG_STATUS_DEFAULT);	
+{		
+	return nrf24_get_register(NRF24_REG_STATUS) == 0xff;	
 }
 
 static void nrf24_debug_status(void)
@@ -179,8 +177,7 @@ static void nrf24_read_payload(void)
 	if (g_payload_buffer_head == NRF24_PAYLOAD_BUFFER_SIZE)
 	{
 		g_payload_buffer_head = 0;
-	}	
-	PORTD |= (1 << PD0);                                    // light green led as success 
+	}		
 }
 
 void nrf24_transmit_packet(char* payload, uint8_t* status)
