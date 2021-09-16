@@ -1,12 +1,23 @@
 CXXFLAGS = -O2 -pipe -g -feliminate-unused-debug-types
-DEPS = controller.h wireless-device.h
-OBJ = server.o wireless-device.o controller.o 
+DEPS = controller.h
+OBJ_SERVER = server.o controller.o 
+OBJ_TEST = test.o controller.o 
+LIBDIR=./lib/
+LIBFLAG=-lwireless
+LIBOBJ=$(LIBDIR)libwireless.a
+LIBHEADER=$(LIBDIR)wireless-device.h
+LIBSRC=$(LIBDIR)wireless-device.cpp
 
-%.o: %.cpp $(DEPS)
+%.o: %.cpp $(DEPS) $(LIBDIR)$(LIBHEADER)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-server: $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS)
+server: $(OBJ_SERVER) 
+	$(CXX) -o $@ $^ $(CXXFLAGS) -L$(LIBDIR) $(LIBFLAG)
 
+test: $(OBJ_TEST) 
+	$(CXX) -o $@ $^ $(CXXFLAGS) -L$(LIBDIR) $(LIBFLAG)
+
+$(LIBOBJ): $(LIBSRC) $(LIBHEADER)
+	cd $(LIBDIR); make;
 clean:
-	rm server *.o 
+	rm server test *.o 

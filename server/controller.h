@@ -1,5 +1,5 @@
 #include <memory>
-#include "wireless-device.h"
+#include "lib/wireless-device.h"
 
 class Controller {
 public:
