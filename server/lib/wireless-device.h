@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory>
 
-class WirelessDevice {
+class IWirelessDevice {
 public:
   virtual void setReceiver() = 0;
   virtual void setTransmitter() = 0;
@@ -13,10 +13,10 @@ public:
   virtual int send(const std::vector<char>& data) = 0;
   virtual std::vector<char> receive() = 0;
   virtual int getBufferSize() = 0;
-  virtual ~WirelessDevice() {};
+  virtual ~IWirelessDevice() {};
 };
 
-class NRF24Device : public WirelessDevice {
+class NRF24Device : public IWirelessDevice {
 public:
   NRF24Device();
   ~NRF24Device();

@@ -1,7 +1,7 @@
 #include "test-cases.h"
 #include <vector>
 
-void TestLongLoop::run(std::unique_ptr<WirelessDevice>& device)
+void TestLongLoop::run(std::unique_ptr<IWirelessDevice>& device)
 {
   std::cout << "TestLongLoop starts to run\n";
   std::vector<char> data{1,2,3,4,0};

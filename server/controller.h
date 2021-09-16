@@ -6,7 +6,7 @@ public:
   ControllerBase();
   virtual void run() = 0;
 protected:
-  std::unique_ptr<WirelessDevice> device;
+  std::unique_ptr<IWirelessDevice> device;
 private:
   const std::vector<char> defaultAddress = {0x10,0x20,0x30,0x40,0x50};
 };
