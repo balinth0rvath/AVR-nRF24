@@ -2,8 +2,8 @@
 
 int main()
 {
-  Controller controller {};  
-
+  TestController testController {};  
+  testController.run();
   return 0;
 }
 
