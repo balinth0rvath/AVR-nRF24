@@ -110,6 +110,11 @@ int nrf24_check_device()
 	return nrf24_get_register(NRF24_REG_STATUS) == 0xff;	
 }
 
+void nrf24_power_down()
+{
+  nrf24_write_register(NRF24_REG_CONFIG,0x0,0x2); 
+}
+
 static void nrf24_debug_status(void)
 {
 	volatile int a,i,reg;

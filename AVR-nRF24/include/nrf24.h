@@ -90,6 +90,7 @@ typedef struct  {
 
 void nrf24_init(uint8_t use_spi);
 int nrf24_check_device();
+void nrf24_power_down();
 void nrf24_set_receiver();
 void nrf24_set_transmitter();
 void nrf24_set_rx_address_p0(uint8_t* address);
