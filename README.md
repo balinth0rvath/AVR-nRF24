@@ -26,7 +26,7 @@ MCUx <-Atmel ICE SPI-> Host<br>
 <br>
 Server UML
 <p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/server_uml.png" width="512" /> 
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/server_uml.png" width="1400" /> 
 </p>
 <br>
 Schematics
