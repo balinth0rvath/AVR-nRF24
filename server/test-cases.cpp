@@ -1,5 +1,8 @@
 #include "test-cases.h"
+#include <chrono>
+#include <thread>
 #include <vector>
+#include <iomanip>
 
 void TestLongLoop::run(std::unique_ptr<IWirelessDevice>& device)
 {
@@ -11,20 +14,22 @@ void TestLongLoop::run(std::unique_ptr<IWirelessDevice>& device)
     device->setTransmitter();
     device->send(data);
     device->setReceiver();
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleepDuration));
     received=device->receive();
-    std::cout << "sent: ";
-    for(const char& byte : data)
-    {
-      std::cout << byte << " ";
-    }
-    std::cout << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleepDuration));
 
-    std::cout << "received: ";
-    for(const char& byte : received)
+    if (std::equal(data.begin(), data.end()-1, received.begin()))
     {
-      std::cout << byte << " ";
+      std::cout << "Count: :" << i << ": pass\n";
+    } else
+    {
+      std::cout << " FAIL:\n";
+      for(const char& byte : received)
+      {
+        std::cout << std::hex << std::setfill('0') << std::setw(2) << (int)byte << " ";
+      }
+      error = true;
     }
-    std::cout << std::endl;
   }
-  error = true;
 }
+

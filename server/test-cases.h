@@ -14,4 +14,5 @@ public:
   virtual bool passed() { return !error; };
 private:
   bool error = false;
+  static constexpr int sleepDuration = 1330;
 };
