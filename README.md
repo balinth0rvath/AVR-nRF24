@@ -5,14 +5,12 @@ A sensor network consisting a server running on a Pi and several environmental s
 ---
 
 ### Code Structure
-Custom nRF24L01 driver in my forked Linux repo located in nRF24L01driver branch<br>
-https://github.com/balinth0rvath/linux<br>
-Server app and unit tests<br>
-https://github.com/balinth0rvath/AVR-nRF24/tree/master/server<br> 
-HW related stuff (Schematics, gerber files etc...)<br>
-https://github.com/balinth0rvath/AVR-nRF24/tree/master/nRF24-design<br>
-Firmware of a sensor module<br>
-https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24
+|Module|Description|
+|------|-----------|
+|Custom nRF24L01 driver in my forked Linux repo located in nRF24L01driver branch|https://github.com/balinth0rvath/linux|
+|Server app and unit tests|https://github.com/balinth0rvath/AVR-nRF24/tree/master/server|
+|HW related stuff (Schematics, gerber files etc...)|https://github.com/balinth0rvath/AVR-nRF24/tree/master/nRF24-design|
+|Firmware of a sensor module|https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24|
 
 ---
 
@@ -128,62 +126,49 @@ $ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- zImage modules dtbs
 $ cd <linux source root>
 $ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi 
 $ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- -C . M=drivers/char/nrf24/
-$ scp nrf24.ko root@192.168.1.137:/home/root/.<br>
+$ scp nrf24.ko root@<IP of PI>:/home/root/.
 ```
 
 ### Server Setup
 ```
-$ cd server<br>
-$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
-$ make lib/libwireless.a<br> 
-$ make<br> 
-$ make test<br>
-$ scp server root@192.168.1.137:/home/root/.<br>
-$ scp test root@192.168.1.137:/home/root/.<br>
+$ cd server
+$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
+$ make lib/libwireless.a
+$ make
+$ make test
+$ scp server root@<IP of PI>:/home/root/.
+$ scp test root@<IP of PI>:/home/root/.
 ```
 
 ### Server Init
 ```
-$ insmod nrf24.ko<br>
-$ ./test<br> 
+$ insmod nrf24.ko
+$ ./test
 $ ./server
 ```
 
 ---
 
 ## Remote Debug Server
-
-target:<br>
+Target
+```
 $ gdbserver :1234 server
-
-host:<br>
+```
+Host
+```
 $ arm-poky-linux-gnueabi-gdb server
-(gdb) target remote 192.168.1.137:1234
-
+(gdb) target remote <IP of PI>:1234
+```
 ---
 
 ## Release Commits (Test Longloop)
-20210517<br>
-linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
-AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
-
-20210523<br>
-linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
-AVR-nRF24@master:7b25dc61fc849677e8bb6358456cee5dc74c7301<br>
-
-20210531<br>
-linux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>
-AVR-nRF24@master:dd0c3b836620fbdc131a8c8d285148fa6ca5f2e6<br>
-
-20210820<br>
-linux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>
-AVR-nRF24@master:85c61a1c3e08124cf29ecca4751b73a7c155e9e8<br>
-
-20210909<br>
-linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>
-AVR-nRF24@master:ca4479ed1e2c967fedf4eaf3a40d907f1cda15d0<br>
-
-20210919<br>
-linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>
-AVR-nRF24@master:d2804b9a1e1fc83868c6ceb204d5eec31b9cb42f<br>
+A test named Test Longloop must pass in all release commits.
+|Releas Date|Driver Branch and Commit Hash<br>Firmware and Design Branch and Commit Hash|
+|----|---|
+|20210517|linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85|
+|20210523|linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>AVR-nRF24@master:7b25dc61fc849677e8bb6358456cee5dc74c7301|
+|20210531|linux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>AVR-nRF24@master:dd0c3b836620fbdc131a8c8d285148fa6ca5f2e6|
+|20210820|inux@nRF24L01driver:7c86b9ca6b2d7ad1549c76c9caeeb97bab567bfb<br>AVR-nRF24@master:85c61a1c3e08124cf29ecca4751b73a7c155e9e8|
+|20210909|linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>AVR-nRF24@master:ca4479ed1e2c967fedf4eaf3a40d907f1cda15d0|
+|20210919|linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>AVR-nRF24@master:d2804b9a1e1fc83868c6ceb204d5eec31b9cb42f|
 
