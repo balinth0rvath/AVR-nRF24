@@ -9,8 +9,8 @@
  #define INIT_SETUP
  #undef TEST_BLINK 
  #undef TEST_ONE_PACKET 
- #undef TEST_LONGLOOP
- #define TEST_SENSOR
+ #define TEST_LONGLOOP
+ #undef TEST_SENSOR
  
 
 #include "common.h"
