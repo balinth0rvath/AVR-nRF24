@@ -1,11 +1,11 @@
 # RF Communication Mesh
-### What is this?
+### What is This?
 A sensor network consisting a server running on a Pi and several environmental sensors based on AVR MCU's. These things are communicating each other via RF and the sensors are planned to work through a season with one charge of a 3.6V battery.  
 
 ---
 
-### Code structure
-RPI Yocto using forked Kernel, custom nRF24L01 driver located in nRF24L01driver branch<br>
+### Code Structure
+Custom nRF24L01 driver in my forked Linux repo located in nRF24L01driver branch<br>
 https://github.com/balinth0rvath/linux<br>
 Server app and unit tests<br>
 https://github.com/balinth0rvath/AVR-nRF24/tree/master/server<br> 
@@ -30,21 +30,21 @@ https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24
 
 ---
 
-### Current dev setup (mid of September 2021)
+### Current Dev Setup (Mid of September 2021)
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_dev_setup.jpg" width="800" />   
 </p>
 
 ---
 
-### Breadboard in early stage
+### Breadboard in Early Stage
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="800" /> 
 </p>
 
 ---
 
-### First prototypes without sensors
+### First Prototypes without Sensors
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb1.jpg" width="400" /> 
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb2.jpg" width="400" /> 
@@ -52,14 +52,14 @@ https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24
 
 ---
 
-### Debug screenshot, DS18B20 Sequence of determining external power supply mode
+### Debug Screenshot, DS18B20 Sequence of Determining External Power Supply Mode
 <p float="left">  
   <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/read_power_supply_sequence.png" width="800" /> 
 </p>
 
 ---
 ## Setup
-### Init Yocto build
+### Init Yocto Build
 ```
 $ mkdir rpi
 $ cd rpi
@@ -100,7 +100,7 @@ VIRTUAL-RUNTIME_init_manager = "systemd"
 IMAGE_INSTALL_append = "crda iw bluez5 wpa-supplicant openssh"
 ```
 
-### Create SD card image and SDK
+### Create SD Card Image and SDK
 ```
 $ cd rpi
 $ . poky/oe-init-build-env
@@ -109,7 +109,7 @@ $ bitbake core-image-minimal -c populate_sdk
 $ tmp/deploy/sdk/poky-glibc-x86_64-core-image-minimal-cortexa7t2hf-neon-vfpv4-raspberrypi3-toolchain-3.2.2.sh
 ```
 
-### Install packages
+### Install Packages
 ```
 $ sudo apt-get install libssl-dev
 ```
@@ -123,7 +123,7 @@ $ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- bcm2709_defconfig
 $ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- zImage modules dtbs
 ```
 
-### Build driver
+### Build Driver
 ```
 $ cd <linux source root>
 $ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi 
@@ -142,7 +142,7 @@ $ scp server root@192.168.1.137:/home/root/.<br>
 $ scp test root@192.168.1.137:/home/root/.<br>
 ```
 
-### Server init
+### Server Init
 ```
 $ insmod nrf24.ko<br>
 $ ./test<br> 
@@ -151,7 +151,7 @@ $ ./server
 
 ---
 
-## Remote debug server
+## Remote Debug Server
 
 target:<br>
 $ gdbserver :1234 server
@@ -162,7 +162,7 @@ $ arm-poky-linux-gnueabi-gdb server
 
 ---
 
-## Release commits (test longloop)
+## Release Commits (Test Longloop)
 20210517<br>
 linux@nRF24L01driver:8a4c0cdf7803df328cc4730b5077f52fee5dc932<br>
 AVR-nRF24@master:3eb939d17d8ff22d65403e109d810f7f85f86c85<br>
