@@ -1,87 +1,155 @@
 # RF Communication Mesh
-### Server
-RPI Yocto using forked Kernel, custom nRF24L01 driver located in nRF24L01driver branch:<br>
+### What is this?
+A sensor network consisting a server running on a Pi and several environmental sensors based on AVR MCU's. These things are communicating each other via RF and the sensors are planned to work through a season with one charge of a 3.6V battery.  
+
+---
+
+### Code structure
+RPI Yocto using forked Kernel, custom nRF24L01 driver located in nRF24L01driver branch<br>
 https://github.com/balinth0rvath/linux<br>
-Readme: https://github.com/balinth0rvath/linux/blob/nRF24L01driver/MEMO.md<br>
-<br>
-Unit tests, test library<br> 
-https://github.com/balinth0rvath/AVR-nRF24/tree/master/test<br> 
-Server app<br>
+Server app and unit tests<br>
 https://github.com/balinth0rvath/AVR-nRF24/tree/master/server<br> 
-<br>
-<br>
-### Sensor modules
-ATmega firmware<br> 
-https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24<br> 
-<br>
-<br>
-## Proto1
-Server <--> MCU1 <--> MCU2<br>
-Server <-bitbang SPI-> nRF24L01<br>
-MCU1 <-bitbang SPI-> nRF24L01<br>
-MCU2 <-HW SPI-> nRF24L01<br>
-Server <-Ethernet-> Host<br>
-MCUx <-Atmel ICE SPI-> Host<br>
-<br>
-<br>
-Server UML
+HW related stuff (Schematics, gerber files etc...)<br>
+https://github.com/balinth0rvath/AVR-nRF24/tree/master/nRF24-design<br>
+Firmware of a sensor module<br>
+https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24
+
+---
+
+### Server UML
 <p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/server_uml.png" width="1400" /> 
-</p>
-<br>
-Schematics
-<br>
-<br>
-<p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/schematics.png" width="512" /> 
-</p>
-<br>
-Breadboard
-<br>
-<br>
-<p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="512" /> 
-</p>
-<br>
-First prototype without sensors
-<br>
-<br>
-<p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb1.jpg" width="256" /> 
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb2.jpg" width="256" /> 
-</p>
-<br>
-DS18B20 Sequence of determining external power supply mode
-<p float="left">  
-  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/read_power_supply_sequence.png" width="512" /> 
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/server_uml.png" width="800" /> 
 </p>
 
+---
+
+### Schematics
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/schematics.png" width="800" /> 
+</p>
+
+---
+
+### Current dev setup (mid of September 2021)
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_dev_setup.jpg" width="800" />   
+</p>
+
+---
+
+### Breadboard in early stage
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/photo_proto1.JPG" width="800" /> 
+</p>
+
+---
+
+### First prototypes without sensors
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb1.jpg" width="400" /> 
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/pcb2.jpg" width="400" /> 
+</p>
+
+---
+
+### Debug screenshot, DS18B20 Sequence of determining external power supply mode
+<p float="left">  
+  <img src="https://github.com/balinth0rvath/AVR-nRF24/blob/master/img/read_power_supply_sequence.png" width="800" /> 
+</p>
+
+---
 ## Setup
-Server app:<br> 
+### Init Yocto build
+```
+$ mkdir rpi
+$ cd rpi
+$ git clone -b gatesgarth git://git.yoctoproject.org/poky.git
+$ git clone -b gatesgarth git://git.openembedded.org/meta-openembedded
+$ git clone -b gatesgarth git://git.openembedded.org/meta-raspberrypi
+$ source poky/oe-init-build-env ./build
+```
+./build/conf/bblayers.conf
+```
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2" 
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \ 
+  ~/yocto-builds/rpi/poky/meta \
+  ~/yocto-builds/rpi/poky/meta-poky \
+  ~/yocto-builds/rpi/poky/meta-yocto-bsp \
+  ~/yocto-builds/rpi/meta-raspberrypi \
+  ~/yocto-builds/rpi/meta-openembedded/meta-oe \
+  ~/yocto-builds/rpi/meta-openembedded/meta-python \
+  ~/yocto-builds/rpi/meta-openembedded/meta-networking \
+  ~/yocto-builds/rpi/meta-openembedded/meta-multimedia \
+  ~/yocto-builds/rpi/meta-openembedded/meta-filesystems \
+  "
+```
+
+./build/conf/local.conf
+```
+...
+MACHINE ??= "raspberrypi3"
+...
+DISTRO_FEATURES_append = "bluez5 bluetooth wifi systemd"
+VIRTUAL-RUNTIME_init_manager = "systemd"
+IMAGE_INSTALL_append = "crda iw bluez5 wpa-supplicant openssh"
+```
+
+### Create SD card image and SDK
+```
+$ cd rpi
+$ . poky/oe-init-build-env
+$ bitbake core-image-minimal
+$ bitbake core-image-minimal -c populate_sdk
+$ tmp/deploy/sdk/poky-glibc-x86_64-core-image-minimal-cortexa7t2hf-neon-vfpv4-raspberrypi3-toolchain-3.2.2.sh
+```
+
+### Install packages
+```
+$ sudo apt-get install libssl-dev
+```
+
+### Build Kernel
+```
+$ cd <linux source root>
+$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi 
+$ KERNEL=kernel7
+$ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- bcm2709_defconfig
+$ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- zImage modules dtbs
+```
+
+### Build driver
+```
+$ cd <linux source root>
+$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi 
+$ make ARCH=arm CROSS_COMPILE=arm-poky-linux-gnueabi- -C . M=drivers/char/nrf24/
+$ scp nrf24.ko root@192.168.1.137:/home/root/.<br>
+```
+
+### Server Setup
+```
 $ cd server<br>
 $ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
+$ make lib/libwireless.a<br> 
 $ make<br> 
+$ make test<br>
 $ scp server root@192.168.1.137:/home/root/.<br>
+$ scp test root@192.168.1.137:/home/root/.<br>
+```
 
-Test app:<br> 
-$ cd test<br>
-$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
-$ make<br> 
-$ scp nrf24-test root@192.168.1.137:/home/root/.<br>
-
-
-Driver:<br>
-$ . /opt/poky/3.2.2/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi<br>
-$ make<br> 
-$ scp nrf24.ko root@192.168.1.137:/home/root/.<br>
-
-Rpi:<br>
+### Server init
+```
 $ insmod nrf24.ko<br>
-$ ./nrf24-test<br> 
+$ ./test<br> 
 $ ./server
+```
 
-MCU:<br>
-Ext. Full-swing Crystal; Start-up time PWRDWN/RESET: 16K CK/14 CK + 65 ms
+---
 
 ## Remote debug server
 
@@ -92,6 +160,7 @@ host:<br>
 $ arm-poky-linux-gnueabi-gdb server
 (gdb) target remote 192.168.1.137:1234
 
+---
 
 ## Release commits (test longloop)
 20210517<br>
@@ -113,4 +182,8 @@ AVR-nRF24@master:85c61a1c3e08124cf29ecca4751b73a7c155e9e8<br>
 20210909<br>
 linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>
 AVR-nRF24@master:ca4479ed1e2c967fedf4eaf3a40d907f1cda15d0<br>
+
+20210919<br>
+linux@nRF24L01driver:f5a8eb844164f856415a3b459346a1253c0f87ff<br>
+AVR-nRF24@master:d2804b9a1e1fc83868c6ceb204d5eec31b9cb42f<br>
 
