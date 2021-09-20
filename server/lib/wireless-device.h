@@ -28,7 +28,7 @@ public:
   virtual std::vector<char> receive();
   virtual int getBufferSize() { return bufferSize;};
 private:
-  static constexpr const int bufferSize = 64;
+  static constexpr int bufferSize = 64;
   static constexpr const char * deviceName = "/dev/nrf24d";
   int fd = 0;
 };

@@ -4,7 +4,7 @@
 #include <vector>
 #include <iomanip>
 
-void TestLongLoop::run(std::unique_ptr<IWirelessDevice>& device)
+void TestLongLoop::run(const std::unique_ptr<IWirelessDevice>& device)
 {
   std::cout << "TestLongLoop starts to run\n";
   std::vector<char> data{1,2,3,4,0};

@@ -87,7 +87,7 @@ std::vector<char> NRF24Device::receive()
 
 std::unique_ptr<NRF24Device> NRF24DeviceBuilder::create() 
 {
-  return std::move(std::make_unique<NRF24Device>()); 
+  return std::make_unique<NRF24Device>(); 
 }
 
 
