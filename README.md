@@ -5,9 +5,9 @@ A sensor network consisting a server running on a Pi and several environmental s
 ---
 
 ### Code Structure
-|Module|Description|
+|Description|Module|
 |------|-----------|
-|Custom nRF24L01 driver in my forked Linux repo located in nRF24L01driver branch|https://github.com/balinth0rvath/linux|
+|Custom nRF24L01 driver in my forked Linux repo located in nRF24L01driver branch|https://github.com/balinth0rvath/linux/tree/nRF24L01driver|
 |Server app and unit tests|https://github.com/balinth0rvath/AVR-nRF24/tree/master/server|
 |HW related stuff (Schematics, gerber files etc...)|https://github.com/balinth0rvath/AVR-nRF24/tree/master/nRF24-design|
 |Firmware of a sensor module|https://github.com/balinth0rvath/AVR-nRF24/tree/master/AVR-nRF24|
