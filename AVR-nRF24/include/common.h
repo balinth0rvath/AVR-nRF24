@@ -9,7 +9,7 @@
 
 #ifndef COMMON_H_
 #ifndef F_CPU					// if F_CPU was not defined in Project -> Properties
-#define F_CPU 10000000UL			// define it now as 10 MHz unsigned long
+#define F_CPU 1000000UL			// define it now as 1MHz internal, unsigned long
 #endif
 #define COMMON_H_
 

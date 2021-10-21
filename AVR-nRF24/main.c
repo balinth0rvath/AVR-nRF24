@@ -11,12 +11,13 @@
  #undef TEST_ONE_PACKET 
  #define TEST_LONGLOOP
  #undef TEST_SENSOR
- 
+ #undef TEST_SLEEP
 
 #include "common.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/sleep.h>
 #include "nrf24.h"
 #include "ds18b20.h"
 
@@ -98,6 +99,7 @@ int main(void)
 #ifdef INIT_SETUP
 	//blink(2,0);
 	nrf24_init(0);	
+
 	ret = nrf24_check_device();	
   
 	if (ret!=0)
@@ -122,7 +124,7 @@ int main(void)
   while(i--)
   {
     PORTD ^= (1 << PD0);
-    _delay_ms(200);	
+    _delay_ms(500);	
   }
   while(1);
 #endif // TEST_BLINK
@@ -169,7 +171,20 @@ int main(void)
     }
   }  
 #endif // TEST_SENSOR
+
+#ifdef TEST_SLEEP
+#endif // TEST_SLEEP
+  sleep_enable();
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  ADCSRA = 0;
+  
+  sleep_cpu();
+  while(1)
+  {
+    _delay_ms(1000);
+  }
 }
+
 
 ISR (INT0_vect)
 {	
