@@ -9,9 +9,10 @@
  #define INIT_SETUP
  #undef TEST_BLINK 
  #undef TEST_ONE_PACKET 
- #define TEST_LONGLOOP
+ #undef TEST_LONGLOOP
  #undef TEST_SENSOR
  #undef TEST_SLEEP
+ #define TEST_TIMER
 
 #include "common.h"
 #include <avr/io.h>
@@ -21,6 +22,7 @@
 #include "nrf24.h"
 #include "ds18b20.h"
 
+void send_response(char* payload);
 
 void send_response_with_head(void)
 {					
@@ -173,16 +175,39 @@ int main(void)
 #endif // TEST_SENSOR
 
 #ifdef TEST_SLEEP
-#endif // TEST_SLEEP
   sleep_enable();
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   ADCSRA = 0;
-  
+
   sleep_cpu();
   while(1)
   {
     _delay_ms(1000);
   }
+#endif // TEST_SLEEP
+  
+#ifdef TEST_TIMER
+  DDRB|=1 << PB0;
+  PORTB &= ~(1 << PB0); // 1024 * 256 * 1/1 000 000 = 262ms
+
+  TCNT0 = 0;
+  TCCR0B|= (1 << CS00) | (1 << CS02);
+  TCCR0B&=~(1 << WGM02);
+  TCCR0A|=(1 << WGM01);
+  TCCR0A&=~(1 << WGM00);
+  OCR0A = 53;
+  while(1){
+    //while( (TIFR0 & (1 << TOV0)) ==0);
+    while( (TIFR0 & (1 << OCF0A)) ==0);
+    
+    //while((TIFR0 & 1)==0);
+    TCNT0 = 0;
+    TIFR0|=(1 << OCF0A);
+    PORTB ^= (1 << PB0);
+    
+  }
+#endif // TEST_SLEEP
+
 }
 
 
