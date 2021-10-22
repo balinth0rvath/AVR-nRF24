@@ -188,24 +188,38 @@ int main(void)
   
 #ifdef TEST_TIMER
   DDRB|=1 << PB0;
-  PORTB &= ~(1 << PB0); // 1024 * 256 * 1/1 000 000 = 262ms
+  PORTB &= ~(1 << PB0); 
 
-  TCNT0 = 0;
-  TCCR0B|= (1 << CS00) | (1 << CS02);
-  TCCR0B&=~(1 << WGM02);
-  TCCR0A|=(1 << WGM01);
-  TCCR0A&=~(1 << WGM00);
-  OCR0A = 53;
-  while(1){
-    //while( (TIFR0 & (1 << TOV0)) ==0);
-    while( (TIFR0 & (1 << OCF0A)) ==0);
-    
-    //while((TIFR0 & 1)==0);
-    TCNT0 = 0;
-    TIFR0|=(1 << OCF0A);
-    PORTB ^= (1 << PB0);
-    
+  // Disable timer counter 2 interrupts by clearing OCIE2x and TOIE2
+  TIMSK2&=~(1 << OCIE2B | 1 << OCIE2A | 1 << TOIE2);
+  // Select external crystal
+  ASSR|=(1 << AS2);
+
+  // Write new values to TCNT2 OCR2x and TCCR2x
+  TCNT2 = 0;
+  TCCR2B|= (1 << CS20) | (1 << CS21) | (1 << CS22);  
+
+  // Wait for TCN2xUB, OCR2xUB and TCR2xUB
+  while(ASSR & (1<<TCN2UB | 1<<TCR2BUB));
+  // Clear the timer counter2 interrupt flags
+  TIFR2|=(1 << TOV2) | (1 << OCF2A) | (1 << OCF2B); 
+  // Enable interrupts
+  TIMSK2|=(1 << TOIE2);
+  sei();
+  sleep_enable();
+  set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+  ADCSRA = 0;
+  
+  while(1)
+  {
+    sleep_cpu();      
+    for(int i=0;i<1255;++i)
+    {
+      PORTB ^= (1 << PB0);
+    }    
   }
+  
+  
 #endif // TEST_SLEEP
 
 }
@@ -221,6 +235,11 @@ ISR (INT0_vect)
 	{
 		nrf24_transmit_irq();			
 	}	
+}
+
+ISR (TIMER2_OVF_vect)
+{
+  
 }
 
 
