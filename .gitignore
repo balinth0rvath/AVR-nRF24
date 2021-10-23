@@ -1,5 +1,7 @@
 AVR-nRF24/Debug
 AVR-nRF24/Release
+sensor/Debug
+sensor/Release
 *.atsuo
 test/nrf24-test
 test/*.o
