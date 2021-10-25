@@ -5,14 +5,21 @@
  * Author : balinth0horvath
  */ 
 
+#include "common.h"
 #include <avr/io.h>
-
+#include "controller.h"
 
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+/* Replace with your application code */
+  Controller controller;  
+  controller.runLongLoop();
+
+  while (1) 
+  {
+  }
 }
+
+
+
 
