@@ -30,7 +30,4 @@ private:
 
 };
 
-
-
-
 #endif /* CONTROLLER_H_ */
